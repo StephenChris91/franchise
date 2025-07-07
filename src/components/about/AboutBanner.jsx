@@ -8,7 +8,7 @@ export default function AboutBanner() {
     <section className="relative h-[80vh] w-full flex items-center justify-center overflow-hidden">
       {/* Visible Background Image */}
       <div
-        className="absolute inset-0 bg-contain bg-center z-0"
+className="absolute inset-0 bg-cover bg-no-repeat z-0"
         style={{ backgroundImage: "url('/assets/banner.png')" }}
       />
 
@@ -30,10 +30,10 @@ export default function AboutBanner() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="text-4xl md:text-6xl font-extrabold leading-tight"
+          className="lg:text-6xl text-4xl md:text-6xl font-extrabold leading-tight"
         >
-          AS IN HEAVEN,  <br />
-          <span className="text-[#af601a]">SO ALSO ON EARTH!</span>
+          AS IN HEAVEN!  <br />
+          {/* <span className="text-[#af601a]">SO ALSO ON EARTH!</span> */}
         </motion.h1>
       </div>
     </section>

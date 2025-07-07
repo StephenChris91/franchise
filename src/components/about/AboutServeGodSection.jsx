@@ -17,8 +17,7 @@ export default function AboutServeGodSection() {
         {/* Right Text Columns */}
         <div className="w-full md:w-3/4 grid md:grid-cols-3 gap-6 text-sm text-gray-800 leading-relaxed">
           <p className='text-justify'>
-            Franchise Church is a mission-minded teaching ministry founded in 2012 by Apostle
-            Emmanuel Iren. Our vision is to see all people celebrate endless life in Christ Jesus
+            Franchise Church is a mission-minded teaching ministry founded in 2018 by Pastor Tosin Martins. Our vision is to see all people celebrate endless life in Christ Jesus
             and fully embrace the power of His death, burial, and resurrection.
           </p>
           <p className='text-justify'>
