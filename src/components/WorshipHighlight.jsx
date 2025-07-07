@@ -1,0 +1,52 @@
+'use client'
+
+import { motion } from 'framer-motion'
+
+export default function WorshipHighlight() {
+  return (
+    <section className="relative h-[90vh] w-full overflow-hidden">
+      {/* Background Image */}
+      <img
+        src="/assets/worship.jpg"
+        alt="Worship at Franchise Church"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      />
+
+      {/* Black Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-black/30 z-10" />
+
+      {/* Content */}
+      <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 text-white">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-3xl md:text-5xl font-bebas tracking-wide mb-4"
+        >
+          WE BOAST IN <br /> CHRIST JESUS
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          viewport={{ once: true }}
+          className="max-w-xl mx-auto text-sm md:text-base text-gray-300"
+        >
+          At Franchise Church, our boast is not in our name or our works, but in the finished work of Jesus. This is our message and our sound.
+        </motion.p>
+
+        <motion.button
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          viewport={{ once: true }}
+          className="mt-6 px-6 py-3 bg-yellow-600 text-white font-semibold rounded-md hover:bg-yellow-400 transition"
+        >
+          Learn More
+        </motion.button>
+      </div>
+    </section>
+  )
+}
