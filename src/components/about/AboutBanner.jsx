@@ -9,7 +9,7 @@ export default function AboutBanner() {
       {/* Visible Background Image */}
       <div
         className="absolute inset-0 bg-contain bg-center z-0"
-        style={{ backgroundImage: "url('/assets/banner-bg.jpg')" }}
+        style={{ backgroundImage: "url('/assets/banner.png')" }}
       />
 
       {/* Bottom-to-top dark fade */}
