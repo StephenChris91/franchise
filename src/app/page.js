@@ -17,7 +17,6 @@ export default function Home() {
       <CommunitySection />
       <LeadPastorSection />
       <EveryoneSection />
-      <GiveBanner />
 
       {/* More sections will go here... */}
     </>

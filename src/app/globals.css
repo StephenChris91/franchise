@@ -7,8 +7,8 @@
   --foreground: #171717;
   --secondary: #af601a;
   --red: #c0392b;
-  --font-heading: "Montserrat", sans-serif;
-  --font-body: "Roboto", sans-serif;
+  --font-heading: "Ubuntu", sans-serif;
+  --font-body: "Ubuntu", sans-serif;
 }
 
 .font-heading {
@@ -17,6 +17,11 @@
 
 .font-body {
   font-family: var(--font-body);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
 }
 
 @theme inline {

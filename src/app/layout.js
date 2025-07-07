@@ -42,16 +42,16 @@
 
 import SiteNavbar from "@/components/Navbar";
 import "./globals.css";
-import { Montserrat, Roboto } from "next/font/google";
+import { Montserrat, Roboto, Oswald, Ubuntu } from "next/font/google";
 import SiteFooter from "@/components/Footer";
 
-const montserrat = Montserrat({
+const ubuntu = Ubuntu({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["500", "700"],
   variable: "--font-heading",
 });
 
-const roboto = Roboto({
+const ubuntuBody = Ubuntu({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
   variable: "--font-body",
@@ -64,7 +64,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${montserrat.variable} ${roboto.variable}`}>
+    <html lang="en" className={`${ubuntu.variable} ${ubuntuBody.variable}`}>
       <body className="font-body">
         <SiteNavbar />
         {children}

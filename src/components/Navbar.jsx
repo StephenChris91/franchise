@@ -63,17 +63,22 @@ export default function SiteNavbar() {
             <div className="flex flex-col md:flex-row p-6 gap-12 max-w-7xl mx-auto">
               {/* Left: Stacked Nav Links */}
               <div className="flex-1">
-                {mainLinks.map((link) => (
-                  <Link
-                    key={link}
-                    href="/"
-                    className={`block text-4xl font-extrabold uppercase mb-4 ${
-                      link === 'Give' ? 'text-gold' : 'text-white'
-                    }`}
-                  >
-                    {link}
-                  </Link>
-                ))}
+                {mainLinks.map((link) => {
+  const path = link.toLowerCase().replace(/\s+/g, '-')
+  const href = path === 'home' ? '/' : `/pages/${path}`
+  return (
+    <Link
+      key={link}
+      href={href}
+      className={`block text-4xl font-extrabold uppercase mb-4 ${
+        link === 'Give' ? 'text-gold' : 'text-white'
+      }`}
+      onClick={() => setIsOpen(false)}
+    >
+      {link}
+    </Link>
+  )
+})}
               </div>
 
               {/* Right: Columns */}
