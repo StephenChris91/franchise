@@ -2,6 +2,7 @@ import AboutApproachSection from "@/components/about/AboutApproachSection";
 import AboutBanner from "@/components/about/AboutBanner";
 import AboutBelieveSection from "@/components/about/AboutBelieveSection";
 import AboutIntroSection from "@/components/about/AboutIntroSection";
+import AboutLeadPastorSection from "@/components/about/AboutLeadPastorSection";
 import AboutServeGodSection from "@/components/about/AboutServeGodSection";
 import IntroSection from "@/components/about/IntroSection";
 // import WeBelieveSection from '@/components/about/WeBelieveSection'
@@ -20,14 +21,7 @@ export default function AboutPage() {
       <AboutServeGodSection />
       <AboutBelieveSection />
       <AboutApproachSection />
-      {/* <WeBelieveSection />
-      <ApproachSection />
-      <GallerySection />
-      <LeadPastorSection />
-      <ExperienceSection />
-      <CommunitySection />
-      <GiveSection />
-      <NewsletterSection /> */}
+      <AboutLeadPastorSection />
     </div>
   );
 }

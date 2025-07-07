@@ -1,6 +1,5 @@
 import CommunitySection from "@/components/CommunitySection";
 import EveryoneSection from "@/components/EveryoneSection";
-import GiveBanner from "@/components/GiveBanner";
 import HeroSection from "@/components/HeroSection";
 import LeadPastorSection from "@/components/LeadPastorSection";
 import MovementSection from "@/components/MovementSection";
@@ -17,7 +16,6 @@ export default function Home() {
       <CommunitySection />
       <LeadPastorSection />
       <EveryoneSection />
-
       {/* More sections will go here... */}
     </>
   );

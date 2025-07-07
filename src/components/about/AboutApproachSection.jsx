@@ -4,7 +4,7 @@ import { FaBook, FaHeart, FaBullhorn } from 'react-icons/fa'
 
 export default function AboutApproachSection() {
   return (
-    <section className="bg-white py-24 px-6 pb-44">
+    <section className="bg-white py-24 px-6 pb-10">
       <div className="max-w-5xl mx-auto text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-2 text-black uppercase">Our Approach</h2>
         <p className="text-sm md:text-base text-gray-600">Faith. Hope. Love. We believe in an intentional walk with God.</p>
