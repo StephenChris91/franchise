@@ -8,7 +8,7 @@ import { FiMenu, FiX } from 'react-icons/fi'
 export default function SiteNavbar() {
   const [isOpen, setIsOpen] = useState(false)
 
-  const mainLinks = ['Home', 'About Us', 'Campuses', 'Ministries', 'Sermons', 'Give']
+  const mainLinks = ['Home', 'About Us', 'Sermons', 'Give']
   const ministries = ['Worship', 'Teens', 'Kids']
   const resources = [
     'Membership classes',
