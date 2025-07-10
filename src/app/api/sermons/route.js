@@ -1,6 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
 
-// IMPORTANT: service role key used only on the server
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -8,32 +7,36 @@ const supabase = createClient(
 
 export async function GET() {
   try {
-    const { data, error } = await supabase.from("sermons").select("*");
+    const { data: sermons, error } = await supabase.from("sermons").select("*");
 
     if (error) {
       console.error("Supabase error:", error);
       return new Response(JSON.stringify([]), { status: 500 });
     }
 
-    const signed = await Promise.all(
-      data.map(async (sermon) => {
-        const { data: audioSigned, error: audioError } = await supabase.storage
+    const signedSermons = await Promise.all(
+      sermons.map(async (sermon) => {
+        const audioRes = await supabase.storage
           .from("sermons-audio")
-          .createSignedUrl(sermon.audio_url, 60 * 60); // audio_url = Discipline.mp3
+          .createSignedUrl(sermon.audio_url, 60 * 60);
 
-        const { data: thumbSigned } = await supabase.storage
-          .from("sermons-thumbnails")
-          .createSignedUrl(sermon.thumbnail, 60 * 60);
+        let thumbnailRes = null;
+        if (sermon.thumbnail) {
+          thumbnailRes = await supabase.storage
+            .from("sermons-thumbnail")
+            .createSignedUrl(sermon.thumbnail, 60 * 60);
+        }
 
         return {
           ...sermon,
-          audioUrl: audioSigned?.signedUrl || null,
-          thumbnail: thumbSigned?.signedUrl || "/assets/sermon-fallback.jpg",
+          audioUrl: audioRes?.data?.signedUrl || null,
+          thumbnail:
+            thumbnailRes?.data?.signedUrl || "/assets/sermon-fallback.jpg",
         };
       })
     );
 
-    return new Response(JSON.stringify(signed), {
+    return new Response(JSON.stringify(signedSermons), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
