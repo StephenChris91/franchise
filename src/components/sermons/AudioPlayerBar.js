@@ -8,9 +8,10 @@ import { HiPause, HiPlay, HiX } from "react-icons/hi";
 export default function AudioPlayerBar() {
   const { currentAudio, clearAudio } = useAudioPlayer();
   const wavesurferRef = useRef(null);
+  const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Cleanup when audio changes or component unmounts
+  // Destroy instance when audio changes
   useEffect(() => {
     return () => {
       if (wavesurferRef.current) {
@@ -24,13 +25,17 @@ export default function AudioPlayerBar() {
   if (!currentAudio?.audioUrl) return null;
 
   const handlePlayPause = () => {
-    if (!wavesurferRef.current) return;
-    wavesurferRef.current.playPause();
-    console.log(
-      `Audio player ${isPlaying ? "paused" : "playing"}:`,
-      currentAudio.title
-    );
-    setIsPlaying((prev) => !prev);
+    const ws = wavesurferRef.current;
+    if (!ws || !isReady) return;
+
+    if (isPlaying) {
+      ws.pause();
+      console.log("Audio player paused:", currentAudio.title);
+    } else {
+      ws.play();
+      console.log("Audio player playing:", currentAudio.title);
+    }
+    setIsPlaying(!isPlaying);
   };
 
   const handleReady = (ws) => {
@@ -38,11 +43,24 @@ export default function AudioPlayerBar() {
       wavesurferRef.current.destroy();
       console.log("Destroying old instance before setting new one");
     }
+
     wavesurferRef.current = ws;
     ws.setVolume(1);
-    ws.play();
+    setIsReady(true);
+    setIsPlaying(false); // Don't autoplay
     console.log("Audio player ready:", currentAudio.title);
-    setIsPlaying(true);
+  };
+
+  const handleClose = () => {
+    if (wavesurferRef.current) {
+      wavesurferRef.current.stop();
+      wavesurferRef.current.destroy();
+      wavesurferRef.current = null;
+      console.log("WaveSurfer instance destroyed on close");
+    }
+    clearAudio();
+    setIsReady(false);
+    setIsPlaying(false);
   };
 
   return (
@@ -51,11 +69,7 @@ export default function AudioPlayerBar() {
         <div className="flex justify-between items-center text-sm mb-2">
           <div className="truncate font-semibold">{currentAudio.title}</div>
           <button
-            onClick={() => {
-              wavesurferRef.current?.stop();
-              clearAudio();
-              setIsPlaying(false);
-            }}
+            onClick={handleClose}
             className="text-white hover:text-red-500 text-lg"
           >
             <HiX />
@@ -66,13 +80,14 @@ export default function AudioPlayerBar() {
           <button
             onClick={handlePlayPause}
             className="text-white text-2xl focus:outline-none"
+            disabled={!isReady}
           >
             {isPlaying ? <HiPause /> : <HiPlay />}
           </button>
 
           <div className="w-full">
             <WaveSurferPlayer
-              key={currentAudio.audioUrl} // 🔑 Forces remount per new audio
+              key={currentAudio.audioUrl}
               height={48}
               waveColor="#999"
               preload="none"
