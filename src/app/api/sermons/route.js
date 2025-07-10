@@ -1,57 +1,44 @@
-// src/app/api/sermons/route.js
+import { createClient } from "@supabase/supabase-js";
 
-import cloudinary from "cloudinary";
-
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// IMPORTANT: service role key used only on the server
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 export async function GET() {
   try {
-    const { resources } = await cloudinary.v2.api.resources({
-      type: "upload",
-      prefix: "sermons",
-      resource_type: "video", // audio files are under "video"
-      max_results: 100,
-    });
+    const { data, error } = await supabase.from("sermons").select("*");
 
-    const sermons = await Promise.all(
-      resources.map(async (item) => {
-        const baseId = item.public_id;
+    if (error) {
+      console.error("Supabase error:", error);
+      return new Response(JSON.stringify([]), { status: 500 });
+    }
 
-        let thumbnail = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${baseId}.jpg`;
+    const signed = await Promise.all(
+      data.map(async (sermon) => {
+        const { data: audioSigned, error: audioError } = await supabase.storage
+          .from("sermons-audio")
+          .createSignedUrl(sermon.audio_url, 60 * 60); // audio_url = Discipline.mp3
 
-        // Check if thumbnail image exists
-        try {
-          await cloudinary.v2.api.resource(baseId, {
-            resource_type: "image",
-          });
-        } catch (err) {
-          thumbnail = "/assets/sermon-fallback.jpg";
-        }
+        const { data: thumbSigned } = await supabase.storage
+          .from("sermons-thumbnails")
+          .createSignedUrl(sermon.thumbnail, 60 * 60);
 
         return {
-          public_id: item.public_id,
-          title: item.public_id.split("/").pop().replace(/[-_]/g, " "),
-          audioUrl: item.secure_url,
-          duration: item.duration,
-          date: new Date(item.created_at).toLocaleDateString("en-GB"),
-          thumbnail,
+          ...sermon,
+          audioUrl: audioSigned?.signedUrl || null,
+          thumbnail: thumbSigned?.signedUrl || "/assets/sermon-fallback.jpg",
         };
       })
     );
 
-    return new Response(JSON.stringify(sermons), {
+    return new Response(JSON.stringify(signed), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("Error fetching sermons:", err);
-    return new Response(JSON.stringify({ error: "Failed to fetch sermons" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("Server error:", err);
+    return new Response(JSON.stringify([]), { status: 500 });
   }
 }

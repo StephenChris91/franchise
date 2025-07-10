@@ -38,19 +38,20 @@ export default function SermonCard({ sermon, onPlay }) {
       </div>
 
       <div className="p-4">
-        <h3 className="text-sm font-semibold leading-tight">{sermon.title}</h3>
+        <h3 className="text-sm font-semibold leading-tight text-black">{sermon.title}</h3>
         <p className="text-xs text-gray-600">{sermon.speaker || 'Landmarks'}</p>
-        <p className="text-xs text-gray-500">{sermon.date}</p>
-
-        <a
-          href={sermon.audioUrl}
-          download
-          onClick={(e) => e.stopPropagation()}
-          className="inline-flex items-center gap-2 text-sm mt-2 text-black bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md"
-        >
-          <HiDownload className="w-4 h-4" />
-          Download
-        </a>
+        <div className='flex justify-between items-center mx-auto'>
+            <p className="text-xs text-gray-500">{sermon.date}</p>
+            <a
+              href={sermon.audioUrl}
+              download
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-2 text-sm mt-2 text-black bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md"
+              >
+              <HiDownload className="w-4 h-4" />
+              Download
+            </a>
+          </div>
       </div>
     </div>
   )
