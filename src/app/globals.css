@@ -54,3 +54,18 @@ body {
   background-color: var(--secondary);
   color: var(--background);
 }
+
+/* Clean up react-h5-audio-player default theme */
+.rhap_container {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.rhap_progress-section {
+  color: white !important;
+}
+
+.rhap_controls-section button {
+  color: white !important;
+}

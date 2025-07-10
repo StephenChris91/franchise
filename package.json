@@ -12,6 +12,7 @@
   "dependencies": {
     "@mux/mux-node": "^12.1.0",
     "@supabase/supabase-js": "^2.50.4",
+    "@wavesurfer/react": "^1.0.11",
     "cloudinary": "^2.7.0",
     "flowbite-react": "^0.11.8",
     "framer-motion": "^12.23.0",
@@ -19,6 +20,7 @@
     "next": "^15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-h5-audio-player": "^3.10.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
     "react-player": "^3.1.0"

@@ -17,6 +17,7 @@ export default function SermonCard({ sermon, onPlay }) {
 
   const handlePlay = () => {
     onPlay(sermon)
+    console.log('Playing sermon:', sermon.title)
   }
 
   return (
@@ -45,9 +46,11 @@ export default function SermonCard({ sermon, onPlay }) {
             <a
               href={sermon.audioUrl}
               download
-              onClick={(e) => e.stopPropagation()}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()} // Prevent play trigger
               className="inline-flex items-center gap-2 text-sm mt-2 text-black bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md"
-              >
+            >
               <HiDownload className="w-4 h-4" />
               Download
             </a>
