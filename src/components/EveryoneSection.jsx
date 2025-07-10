@@ -12,7 +12,7 @@ export default function EveryoneSection() {
     },
     {
       label: 'Franchise Adults',
-      image: '/assets/adults.jpg',
+      image: '/assets/Adults.jpg',
     },
   ]
 
