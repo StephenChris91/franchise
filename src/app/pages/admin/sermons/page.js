@@ -22,6 +22,7 @@ export default function SermonsUploadPage() {
     date: "",
     audioFile: null,
     thumbnailFile: null,
+    categories: "", // NEW
   });
 
   const resetForm = () => {
@@ -31,12 +32,13 @@ export default function SermonsUploadPage() {
       date: "",
       audioFile: null,
       thumbnailFile: null,
+      categories: "",
     });
     setDuration(null);
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-20 px-6 bg-white rounded shadow">
+    <div className="max-w-2xl mx-auto py-20 px-6 bg-white rounded shadow pb-44">
       <h2 className="text-2xl font-bold mb-6">Upload New Sermon</h2>
 
       <form
@@ -54,6 +56,7 @@ export default function SermonsUploadPage() {
             if (form.thumbnailFile) {
               formPayload.append("thumbnailFile", form.thumbnailFile);
             }
+            formPayload.append("categories", form.categories || ""); // ✅ ADD THIS
 
             const res = await fetch("/api/sermons/upload", {
               method: "POST",
@@ -97,6 +100,19 @@ export default function SermonsUploadPage() {
             name="speaker"
             placeholder="Speaker"
             value={form.speaker}
+            onChange={(e) =>
+              handleSermonChange(e, setForm, audioRef, setDuration)
+            }
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="categories" value="Categories (comma-separated)" />
+          <TextInput
+            id="categories"
+            name="categories"
+            placeholder="e.g. Faith, Leadership, Healing"
+            value={form.categories || ""}
             onChange={(e) =>
               handleSermonChange(e, setForm, audioRef, setDuration)
             }

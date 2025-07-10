@@ -2,7 +2,7 @@
 
 export default function GiveBanner() {
   return (
-    <section className="relative bg-[#af601a] pt-32 pb-20 px-4">
+    <section className="relative bg-[#af601a] pt-32 pb-20 px-4 lg:mt-44">
       {/* Floating GIVE CARD */}
       <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-full max-w-6xl bg-[#ededed] text-black rounded-xl shadow-lg p-10 md:p-14 overflow-hidden h-96">
         <div className="relative z-10">

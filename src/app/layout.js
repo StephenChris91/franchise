@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
         <AudioPlayerProvider>
           <SiteNavbar />
           {children}
-          {/* <SiteFooter /> */}
+          <SiteFooter />
           <AudioPlayerBar />
         </AudioPlayerProvider>
       </body>

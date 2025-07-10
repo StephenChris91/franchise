@@ -1,4 +1,3 @@
-// app/api/sermons/upload/route.js
 import { supabaseAdmin } from "@/utils/supabaseAdmin";
 
 export async function POST(req) {
@@ -10,6 +9,7 @@ export async function POST(req) {
   const duration = formData.get("duration");
   const audioFile = formData.get("audioFile");
   const thumbnailFile = formData.get("thumbnailFile");
+  const rawCategories = formData.get("categories") || "";
 
   if (!audioFile || !title || !date || !duration) {
     return new Response(JSON.stringify({ error: "Missing required fields" }), {
@@ -17,7 +17,13 @@ export async function POST(req) {
     });
   }
 
-  // Upload audio
+  // 🔄 Parse categories (comma-separated)
+  const categories = rawCategories
+    .split(",")
+    .map((c) => c.trim().toLowerCase())
+    .filter(Boolean); // remove empty strings
+
+  // ⬆️ Upload audio
   const { error: audioError } = await supabaseAdmin.storage
     .from("sermons-audio")
     .upload(audioFile.name, audioFile, {
@@ -28,12 +34,11 @@ export async function POST(req) {
   if (audioError) {
     return new Response(
       JSON.stringify({ error: "Audio upload failed", audioError }),
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 
+  // ⬆️ Upload thumbnail (if provided)
   let thumbnailName = "";
   if (thumbnailFile && thumbnailFile.name) {
     const { error: thumbError } = await supabaseAdmin.storage
@@ -53,7 +58,7 @@ export async function POST(req) {
     thumbnailName = thumbnailFile.name;
   }
 
-  // Insert metadata
+  // 🗃️ Insert sermon metadata
   const { error: dbError } = await supabaseAdmin.from("sermons").insert([
     {
       title,
@@ -62,15 +67,14 @@ export async function POST(req) {
       duration,
       audio_url: audioFile.name,
       thumbnail: thumbnailName || "/assets/sermon-fallback.jpg",
+      categories,
     },
   ]);
 
   if (dbError) {
     return new Response(
       JSON.stringify({ error: "DB insert failed", dbError }),
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 

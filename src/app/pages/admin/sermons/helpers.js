@@ -57,6 +57,9 @@ export const handleSermonUpload = async (
         duration: Math.floor(duration),
         audio_url: audioFilename,
         thumbnail: thumbnailFilename,
+        categories: form.categories
+          ? form.categories.split(",").map((c) => c.trim().toLowerCase())
+          : [],
       },
     ]);
 
