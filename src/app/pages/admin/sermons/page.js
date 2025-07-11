@@ -22,7 +22,7 @@ export default function SermonsUploadPage() {
     date: "",
     audioFile: null,
     thumbnailFile: null,
-    categories: "", // NEW
+    categories: "",
   });
 
   const resetForm = () => {
@@ -42,130 +42,79 @@ export default function SermonsUploadPage() {
       <h2 className="text-2xl font-bold mb-6">Upload New Sermon</h2>
 
       <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setLoading(true);
-
-          try {
-            const formPayload = new FormData();
-            formPayload.append("title", form.title);
-            formPayload.append("speaker", form.speaker);
-            formPayload.append("date", form.date);
-            formPayload.append("duration", duration);
-            formPayload.append("audioFile", form.audioFile);
-            if (form.thumbnailFile) {
-              formPayload.append("thumbnailFile", form.thumbnailFile);
-            }
-            formPayload.append("categories", form.categories || ""); // ✅ ADD THIS
-
-            const res = await fetch("/api/sermons/upload", {
-              method: "POST",
-              body: formPayload,
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Upload failed");
-            alert("Sermon uploaded successfully");
-            resetForm();
-          } catch (err) {
-            alert(err.message || "Upload failed");
-          } finally {
-            setLoading(false);
-          }
-        }}
+        onSubmit={(e) =>
+          handleSermonUpload(e, form, duration, setLoading, resetForm)
+        }
         className="flex flex-col gap-6"
       >
-        <div>
-          <Label
-            htmlFor="title"
-            value="Sermon Title"
-            className="text-sm font-medium text-gray-700"
-          />
-          <TextInput
-            id="title"
-            name="title"
-            placeholder="Enter sermon title"
-            value={form.title}
-            onChange={(e) =>
-              handleSermonChange(e, setForm, audioRef, setDuration)
-            }
-            required
-          />
-        </div>
+        <TextInput
+          id="title"
+          name="title"
+          placeholder="Enter sermon title"
+          value={form.title}
+          onChange={(e) =>
+            handleSermonChange(e, setForm, audioRef, setDuration)
+          }
+          required
+        />
 
-        <div>
-          <Label htmlFor="speaker" value="Speaker" />
-          <TextInput
-            id="speaker"
-            name="speaker"
-            placeholder="Speaker"
-            value={form.speaker}
-            onChange={(e) =>
-              handleSermonChange(e, setForm, audioRef, setDuration)
-            }
-          />
-        </div>
+        <TextInput
+          id="speaker"
+          name="speaker"
+          placeholder="Speaker"
+          value={form.speaker}
+          onChange={(e) =>
+            handleSermonChange(e, setForm, audioRef, setDuration)
+          }
+        />
 
-        <div>
-          <Label htmlFor="categories" value="Categories (comma-separated)" />
-          <TextInput
-            id="categories"
-            name="categories"
-            placeholder="e.g. Faith, Leadership, Healing"
-            value={form.categories || ""}
-            onChange={(e) =>
-              handleSermonChange(e, setForm, audioRef, setDuration)
-            }
-          />
-        </div>
+        <TextInput
+          id="categories"
+          name="categories"
+          placeholder="e.g. Faith, Leadership, Healing"
+          value={form.categories}
+          onChange={(e) =>
+            handleSermonChange(e, setForm, audioRef, setDuration)
+          }
+        />
 
-        <div>
-          <Label htmlFor="date" value="Date" />
-          <Datepicker
-            id="date"
-            name="date"
-            placeholder="Select sermon date"
-            onChange={(val) => {
-              const formattedDate = val?.toISOString().split("T")[0]; // YYYY-MM-DD
-              handleSermonChange(
-                {
-                  target: {
-                    name: "date",
-                    value: formattedDate,
-                  },
+        <Datepicker
+          id="date"
+          name="date"
+          onChange={(date) => {
+            const formattedDate = date?.toISOString().split("T")[0];
+            handleSermonChange(
+              {
+                target: {
+                  name: "date",
+                  value: formattedDate,
                 },
-                setForm,
-                audioRef,
-                setDuration
-              );
-            }}
-          />
-        </div>
+              },
+              setForm,
+              audioRef,
+              setDuration
+            );
+          }}
+        />
 
-        <div>
-          <Label htmlFor="audioFile" value="MP3 File" />
-          <FileInput
-            id="audioFile"
-            name="audioFile"
-            accept=".mp3"
-            required
-            onChange={(e) =>
-              handleSermonChange(e, setForm, audioRef, setDuration)
-            }
-          />
-        </div>
+        <FileInput
+          id="audioFile"
+          name="audioFile"
+          accept=".mp3"
+          required
+          onChange={(e) =>
+            handleSermonChange(e, setForm, audioRef, setDuration)
+          }
+        />
 
-        <div>
-          <Label htmlFor="thumbnailFile" value="Thumbnail Image (optional)" />
-          <FileInput
-            id="thumbnailFile"
-            name="thumbnailFile"
-            accept="image/*"
-            onChange={(e) =>
-              handleSermonChange(e, setForm, audioRef, setDuration)
-            }
-          />
-        </div>
+        <FileInput
+          id="thumbnailFile"
+          name="thumbnailFile"
+          accept="image/*"
+          onChange={(e) =>
+            handleSermonChange(e, setForm, audioRef, setDuration)
+          }
+        />
 
         {duration && (
           <p className="text-sm text-gray-600">
@@ -173,11 +122,7 @@ export default function SermonsUploadPage() {
           </p>
         )}
 
-        <Button
-          type="submit"
-          disabled={loading || !duration}
-          className="cursor-pointer rounded-sm"
-        >
+        <Button type="submit" disabled={loading || !duration}>
           {loading ? <Spinner size="sm" className="mr-2" /> : null}
           Upload Sermon
         </Button>

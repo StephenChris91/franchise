@@ -2,6 +2,22 @@
 
 import { supabase } from "@/utils/supabase";
 
+const handleCompressedUpload = async (file) => {
+  const formData = new FormData();
+  formData.append("audio", file);
+
+  const res = await fetch("/api/compress", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Compression/upload failed");
+
+  return data.filename;
+};
+
+// 🧠 Fix: Handle all input fields and update form state
 export const handleSermonChange = (e, setForm, audioRef, setDuration) => {
   const { name, value, files } = e.target;
 
@@ -17,6 +33,7 @@ export const handleSermonChange = (e, setForm, audioRef, setDuration) => {
   }
 };
 
+// 📤 Upload to Supabase
 export const handleSermonUpload = async (
   e,
   form,
@@ -28,46 +45,38 @@ export const handleSermonUpload = async (
   setLoading(true);
 
   try {
-    const { title, speaker, date, audioFile, thumbnailFile } = form;
-    const audioFilename = audioFile.name;
-    const thumbnailFilename = thumbnailFile?.name || null;
+    const { title, speaker, date, audioFile, thumbnailFile, categories } = form;
 
-    if (!title || !date || !audioFile) {
-      throw new Error("Missing required fields");
+    // ✅ Validation
+    if (!title?.trim() || !date?.trim() || !audioFile) {
+      alert("Please complete all required fields before submitting.");
+      return;
     }
 
-    // Upload audio
-    await supabase.storage
-      .from("sermons-audio")
-      .upload(audioFilename, audioFile, { upsert: true });
-
-    // Upload thumbnail
+    const formData = new FormData();
+    formData.append("audio", audioFile);
+    formData.append("title", title);
+    formData.append("speaker", speaker || "");
+    formData.append("date", date);
+    formData.append("duration", duration);
+    formData.append("categories", categories || "");
     if (thumbnailFile) {
-      await supabase.storage
-        .from("sermons-thumbnail")
-        .upload(thumbnailFilename, thumbnailFile, { upsert: true });
+      formData.append("thumbnailFile", thumbnailFile);
     }
 
-    // Insert into DB
-    await supabase.from("sermons").insert([
-      {
-        title,
-        speaker,
-        date,
-        duration: Math.floor(duration),
-        audio_url: audioFilename,
-        thumbnail: thumbnailFilename,
-        categories: form.categories
-          ? form.categories.split(",").map((c) => c.trim().toLowerCase())
-          : [],
-      },
-    ]);
+    const res = await fetch("/api/compress", {
+      method: "POST",
+      body: formData,
+    });
 
-    alert("✅ Sermon uploaded successfully.");
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Upload failed");
+
+    alert("✅ Sermon uploaded successfully");
     resetForm();
   } catch (err) {
-    console.error("Upload error:", err);
-    alert("❌ Upload failed. Check console.");
+    console.error("Upload Error:", err);
+    alert(`❌ Upload failed: ${err.message}`);
   } finally {
     setLoading(false);
   }
