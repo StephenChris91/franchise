@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useAudioContext } from "@/context/AudioContext";
 import WaveSurferPlayer from "@wavesurfer/react";
 import { Pause, Play, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "flowbite-react";
+import { useAudioPlayer } from "@/context/AudioPlayerContext";
 
 export default function AudioPlayerBar() {
   const { currentAudio, isPlaying, setIsPlaying, setCurrentAudio } =
-    useAudioContext();
+    useAudioPlayer();
 
   const wavesurferRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
