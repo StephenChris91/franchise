@@ -96,9 +96,10 @@ export default function SermonsUploadPage() {
       const xhr = new XMLHttpRequest();
       xhr.open(
         "POST",
-        process.env.NEXT_PUBLIC_BACKEND_URL + "/api/sermons",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/sermons`,
         true
       );
+
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           const percent = Math.round((event.loaded / event.total) * 100);

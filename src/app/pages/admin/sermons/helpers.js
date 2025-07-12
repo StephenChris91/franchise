@@ -64,7 +64,7 @@ export const handleSermonUpload = async (
     }
 
     const res = await fetch(
-      process.env.NEXT_PUBLIC_BACKEND_URL + "/api/sermons",
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/sermons`,
       {
         method: "POST",
         body: formData,
