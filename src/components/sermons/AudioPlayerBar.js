@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { useAudioContext } from "@/context/AudioContext";
 import WaveSurferPlayer from "@wavesurfer/react";
