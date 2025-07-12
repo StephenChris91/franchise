@@ -14,7 +14,7 @@ export default function SermonsPage() {
   const { setAudio } = useAudioPlayer();
 
   useEffect(() => {
-    fetch("/api/sermons")
+    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/api/sermons")
       .then((res) => res.json())
       .then((data) => {
         setSermons(data);

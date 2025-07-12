@@ -69,3 +69,16 @@ body {
 .rhap_controls-section button {
   color: white !important;
 }
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.4s ease-in-out;
+}

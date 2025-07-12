@@ -47,7 +47,6 @@ export const handleSermonUpload = async (
   try {
     const { title, speaker, date, audioFile, thumbnailFile, categories } = form;
 
-    // ✅ Validation
     if (!title?.trim() || !date?.trim() || !audioFile) {
       alert("Please complete all required fields before submitting.");
       return;
@@ -64,10 +63,13 @@ export const handleSermonUpload = async (
       formData.append("thumbnailFile", thumbnailFile);
     }
 
-    const res = await fetch("/api/compress", {
-      method: "POST",
-      body: formData,
-    });
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + "/api/sermons",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Upload failed");

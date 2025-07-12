@@ -4,6 +4,7 @@ import { Montserrat, Roboto, Oswald, Ubuntu } from "next/font/google";
 import SiteFooter from "@/components/Footer";
 import { AudioPlayerProvider } from "@/context/AudioPlayerContext";
 import AudioPlayerBar from "@/components/sermons/AudioPlayerBar";
+import { Toaster } from "react-hot-toast";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
           <SiteFooter />
           <AudioPlayerBar />
         </AudioPlayerProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
   );
