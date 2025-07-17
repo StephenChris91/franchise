@@ -34,7 +34,7 @@ export default function SiteNavbar() {
         {/* Hamburger Icon */}
         <button
           onClick={() => setIsOpen(true)}
-          className="text-2xl text-white"
+          className="text-2xl text-white cursor-pointer"
           aria-label="Open menu"
         >
           <FiMenu />
@@ -70,7 +70,7 @@ export default function SiteNavbar() {
     <Link
       key={link}
       href={href}
-      className={`block text-4xl font-extrabold uppercase mb-4 ${
+      className={`block text-4xl font-extrabold uppercase mb-4 cursor-pointer${
         link === 'Give' ? 'text-gold' : 'text-white'
       }`}
       onClick={() => setIsOpen(false)}
