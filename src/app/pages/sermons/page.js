@@ -9,16 +9,17 @@ import { useAudioPlayer } from "@/context/AudioPlayerContext";
 
 export default function SermonsPage() {
   const [sermons, setSermons] = useState([]);
-  const [filteredSermons, setFilteredSermons] = useState([]); // ✅ initialized
+  const [filteredSermons, setFilteredSermons] = useState([]);
   const [loading, setLoading] = useState(true);
   const { setAudio } = useAudioPlayer();
 
   useEffect(() => {
+    console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/sermons`)
       .then((res) => res.json())
       .then((data) => {
         setSermons(data);
-        setFilteredSermons(data); // ✅ initial filtered view = all
+        setFilteredSermons(data);
       })
       .finally(() => setLoading(false));
   }, []);
