@@ -97,7 +97,7 @@ export default function AudioPlayerBar() {
   if (!currentAudio?.audioUrl) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-rose-50 text-black z-[9999] shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 bg-black text-black z-[9999] shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* LEFT: Thumbnail and Title */}
@@ -105,12 +105,14 @@ export default function AudioPlayerBar() {
             <img
               src={currentAudio.thumbnail}
               alt={currentAudio.title}
-              className="w-12 h-12 object-cover rounded-md"
+              className="w-12 h-12 object-cover rounded-xs"
             />
             <div className="truncate">
-              <p className="font-semibold truncate">{currentAudio.title}</p>
+              <p className="font-semibold truncate text-gray-50">
+                {currentAudio.title}
+              </p>
               {currentAudio.speaker && (
-                <p className="text-sm text-gray-500 truncate">
+                <p className="text-sm text-[#af601a] truncate">
                   {currentAudio.speaker}
                 </p>
               )}
@@ -119,7 +121,7 @@ export default function AudioPlayerBar() {
 
           {/* CENTER: Player */}
           <div className="flex-1 flex flex-col gap-1 items-center">
-            <div className="flex items-center gap-4 text-2xl text-black">
+            <div className="flex items-center gap-4 text-2xl text-white">
               <button onClick={() => skip(-10)} title="Back 10s">
                 <HiChevronLeft />
               </button>
@@ -134,7 +136,7 @@ export default function AudioPlayerBar() {
             </div>
 
             <div className="flex items-center gap-2 w-full">
-              <span className="text-xs font-mono w-[48px]">
+              <span className="text-xs font-mono w-[48px] text-gray-50">
                 {formatTime(progress)}
               </span>
               <input
@@ -146,7 +148,7 @@ export default function AudioPlayerBar() {
                 onChange={seek}
                 className="flex-1 h-1 appearance-none bg-gray-300 rounded-lg"
               />
-              <span className="text-xs font-mono w-[48px] text-right">
+              <span className="text-xs font-mono w-[48px] text-right text-gray-50">
                 {formatTime(duration)}
               </span>
             </div>
@@ -156,7 +158,7 @@ export default function AudioPlayerBar() {
           <div className="shrink-0">
             <button
               onClick={handleClose}
-              className="text-gray-600 text-xl hover:text-red-500"
+              className="text-gray-50 text-xl hover:text-red-500"
               title="Close Player"
             >
               <HiX />

@@ -27,8 +27,12 @@ export default function SermonsPage() {
         }
 
         const data = await res.json();
-        setSermons(data);
-        setFilteredSermons(data);
+        console.log("✅ Sermons data:", data);
+
+        // const sermonList = Array.isArray(data) ? data : data.sermons;
+
+        setSermons(data.sermons);
+        setFilteredSermons(data.sermons);
       } catch (err) {
         console.error("❌ Failed to fetch sermons:", err.message);
       } finally {

@@ -4,7 +4,13 @@ import React, { useEffect, useState } from 'react'
 import { HiDownload } from 'react-icons/hi'
 
 export default function SermonCard({ sermon, onPlay }) {
+
   const [durationText, setDurationText] = useState('')
+
+  const imageUrl = sermon.thumbnail.startsWith("http")
+  ? sermon.thumbnail
+  : `${process.env.NEXT_PUBLIC_SUPABASE_THUMBNAIL_URL}/${sermon.thumbnail}`;
+
 
   useEffect(() => {
     if (sermon.duration) {
