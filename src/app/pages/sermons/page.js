@@ -1,47 +1,90 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Spinner } from "flowbite-react";
 import SermonCard from "@/components/sermons/SermonsCard";
 import SermonFilters from "@/components/sermons/SermonFilters";
 import AudioPlayerBar from "@/components/sermons/AudioPlayerBar";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SermonsPage() {
   const [sermons, setSermons] = useState([]);
   const [filteredSermons, setFilteredSermons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { setAudio } = useAudioPlayer();
-
+  const observerRef = useRef();
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const limit = 8;
+
+  const fetchSermons = async (offset = 0) => {
+    const res = await fetch(
+      `${backendUrl}/api/sermons?offset=${offset}&limit=${limit}`
+    );
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Failed to fetch");
+
+    return data.sermons || [];
+  };
 
   useEffect(() => {
-    const fetchSermons = async () => {
+    (async () => {
       try {
-        const res = await fetch(`${backendUrl}/api/sermons`);
-        const contentType = res.headers.get("content-type");
-
-        if (!res.ok || !contentType?.includes("application/json")) {
-          const text = await res.text();
-          throw new Error(`❌ Invalid response: ${text.slice(0, 200)}`);
-        }
-
-        const data = await res.json();
-        console.log("✅ Sermons data:", data);
-
-        // const sermonList = Array.isArray(data) ? data : data.sermons;
-
-        setSermons(data.sermons);
-        setFilteredSermons(data.sermons);
+        const initialSermons = await fetchSermons();
+        setSermons(initialSermons);
+        setFilteredSermons(initialSermons);
+        if (initialSermons.length < limit) setHasMore(false);
       } catch (err) {
-        console.error("❌ Failed to fetch sermons:", err.message);
+        console.error("Fetch error:", err);
+        toast.error("Failed to load sermons");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchSermons();
+    })();
   }, [backendUrl]);
+
+  // 👇 Infinite Scroll Handler
+  useEffect(() => {
+    if (!hasMore || loadingMore) return;
+
+    const observer = new IntersectionObserver(
+      async ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoadingMore(true);
+          try {
+            const offset = sermons.length;
+            const moreSermons = await fetchSermons(offset);
+
+            if (moreSermons.length === 0) {
+              setHasMore(false);
+              toast.info("All sermons loaded");
+              return;
+            }
+
+            const updated = [...sermons, ...moreSermons];
+            setSermons(updated);
+            setFilteredSermons(updated);
+          } catch (err) {
+            toast.error("Failed to load more sermons");
+          } finally {
+            setLoadingMore(false);
+          }
+        }
+      },
+      { rootMargin: "100px" }
+    );
+
+    const current = observerRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [sermons, loadingMore, hasMore, backendUrl]);
 
   const handlePlay = (sermon) => {
     setAudio(sermon);
@@ -49,7 +92,9 @@ export default function SermonsPage() {
 
   return (
     <section className="px-6 py-24 bg-[#ededed]">
+      <ToastContainer position="bottom-center" autoClose={3000} />
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
           <div className="flex-1 text-center md:text-left">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight">
@@ -71,24 +116,34 @@ export default function SermonsPage() {
           </div>
         </div>
 
+        {/* Filters */}
         {!loading && sermons.length > 0 && (
           <SermonFilters allSermons={sermons} onFilter={setFilteredSermons} />
         )}
 
+        {/* Sermon Grid */}
         {loading ? (
           <div className="flex justify-center mt-20">
             <Spinner size="xl" color="pink" />
           </div>
         ) : filteredSermons.length > 0 ? (
-          <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6 py-16 max-w-7xl mx-auto">
-            {filteredSermons.map((sermon) => (
-              <SermonCard
-                key={sermon.public_id || sermon.asset_id || sermon.audioUrl}
-                sermon={sermon}
-                onPlay={handlePlay}
-              />
-            ))}
-          </section>
+          <>
+            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6 py-16 max-w-7xl mx-auto">
+              {filteredSermons.map((sermon) => (
+                <SermonCard
+                  key={sermon.id}
+                  sermon={sermon}
+                  onPlay={handlePlay}
+                />
+              ))}
+            </section>
+            <div ref={observerRef} className="h-1" />
+            {loadingMore && (
+              <div className="text-center mt-4">
+                <Spinner size="md" color="gray" />
+              </div>
+            )}
+          </>
         ) : (
           <p className="text-center text-gray-500 mt-20">No sermons found.</p>
         )}
