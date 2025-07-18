@@ -12,14 +12,9 @@ export default function SiteNavbar() {
   const ministries = ['Worship', 'Teens', 'Kids']
   const resources = [
     'Membership classes',
-    'Celebrations',
     'Counselling',
-    'Pre Marital Counselling',
-    'Post Marital Counselling',
-    'Welfare Request',
-    'New Campus Volunteers',
   ]
-  const connect = ['Become a member', 'Visit Franchise']
+  const connect = ['Visit Franchise']
   const media = ['Watch online']
 
   return (
@@ -27,9 +22,14 @@ export default function SiteNavbar() {
       {/* Top Navbar */}
       <nav className="bg-black text-white py-4 px-6 flex justify-between items-center relative z-50">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold tracking-wider">
-          <span className="text-white">FRANCHISE CHURCH</span>{' '}
-        </Link>
+        <Link href="/" className="cursor-pointer">
+  <img
+    src="/assets/logo.png"
+    alt="Franchise Church Logo"
+    className="h-10 w-auto object-contain"
+  />
+</Link>
+
 
         {/* Hamburger Icon */}
         <button
@@ -52,10 +52,14 @@ export default function SiteNavbar() {
           >
             <div className="flex justify-between items-start p-6">
               {/* Logo */}
-              <span className="text-3xl font-bold text-white">∞</span>
+<img
+  src="/assets/logo.png"
+  alt="Franchise Church Logo"
+  className="h-10 w-auto object-contain"
+/>
 
               {/* Close Icon */}
-              <button onClick={() => setIsOpen(false)} className="text-3xl">
+              <button onClick={() => setIsOpen(false)} className="text-3xl cursor-pointer">
                 <FiX />
               </button>
             </div>

@@ -21,10 +21,10 @@ export default function WelcomeSection() {
 
       {/* Carousel Buttons */}
       <div className="flex justify-center mt-6 gap-4">
-        <button className=" bg-gray-800  h-12 w-12 rounded-full border text-lg text-black hover:text-gold hover:border-gold transition">
+        <button className=" bg-gray-50  h-12 w-12 rounded-full border border-[#af601a] text-lg text-black hover:text-gold hover:border-gold transition">
           <FaArrowLeft className="mx-auto" />
         </button>
-        <button className="bg-gray-800 h-12 w-12 rounded-full border text-lg text-black hover:text-gold hover:border-gold transition">
+        <button className="bg-gray-50 h-12 w-12 rounded-full border border-[#af601a] text-lg text-black hover:text-gold hover:border-gold transition">
           <FaArrowRight className="mx-auto" />
         </button>
       </div>
