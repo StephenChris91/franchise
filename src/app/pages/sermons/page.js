@@ -13,25 +13,39 @@ export default function SermonsPage() {
   const [loading, setLoading] = useState(true);
   const { setAudio } = useAudioPlayer();
 
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   useEffect(() => {
-    console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/sermons`)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchSermons = async () => {
+      try {
+        const res = await fetch(`${backendUrl}/api/sermons`);
+        const contentType = res.headers.get("content-type");
+
+        if (!res.ok || !contentType?.includes("application/json")) {
+          const text = await res.text();
+          throw new Error(`❌ Invalid response: ${text.slice(0, 200)}`);
+        }
+
+        const data = await res.json();
         setSermons(data);
         setFilteredSermons(data);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+      } catch (err) {
+        console.error("❌ Failed to fetch sermons:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSermons();
+  }, [backendUrl]);
 
   const handlePlay = (sermon) => {
     setAudio(sermon);
   };
 
   return (
-    <section className="px-6 py-24 bg-[#ededed] ">
+    <section className="px-6 py-24 bg-[#ededed]">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
           <div className="flex-1 text-center md:text-left">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight">
@@ -50,15 +64,13 @@ export default function SermonsPage() {
               allowFullScreen
               className="w-full h-full"
             />
-          </div>{" "}
+          </div>
         </div>
 
-        {/* Filters */}
         {!loading && sermons.length > 0 && (
           <SermonFilters allSermons={sermons} onFilter={setFilteredSermons} />
         )}
 
-        {/* Content */}
         {loading ? (
           <div className="flex justify-center mt-20">
             <Spinner size="xl" color="pink" />
@@ -77,7 +89,6 @@ export default function SermonsPage() {
           <p className="text-center text-gray-500 mt-20">No sermons found.</p>
         )}
 
-        {/* Audio Bar */}
         <AudioPlayerBar />
       </div>
     </section>
