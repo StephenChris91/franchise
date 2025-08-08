@@ -23,7 +23,7 @@ className="absolute inset-0 bg-cover bg-no-repeat z-0"
           transition={{ delay: 0.2 }}
           className="inline-block bg-white/10 text-xs uppercase font-heading tracking-wide px-4 py-1 rounded-full mb-4"
         >
-          WE ARE THE FRANCHISE
+          HERE, ON EARTH
         </motion.span>
 
         <motion.h1

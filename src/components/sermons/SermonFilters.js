@@ -52,7 +52,7 @@ export default function SermonFilters({ allSermons, onFilter }) {
       </div>
 
       {/* Headline */}
-      <h2 className="text-3xl sm:text-4xl font-extrabold tracking-wide uppercase mb-2 text-gray-800">
+      <h2 className="text-3xl sm:text-4xl font-normal tracking-wide mb-2 text-gray-800">
         Latest Sermons
       </h2>
 

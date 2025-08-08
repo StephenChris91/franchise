@@ -12,7 +12,7 @@ export default function WelcomeSection() {
         </span>
       </div>
 
-      <h2 className="text-4xl md:text-5xl font-bebas tracking-widest text-black mt-4">WELCOME HOME!</h2>
+      <h2 className="text-4xl md:text-5xl font-bebas tracking-widest text-black mt-4">Welcome Home!</h2>
 
       <p className="text-gray-600 max-w-md mx-auto mt-2 text-sm">
         Dive into our teachings, events and community. <br />

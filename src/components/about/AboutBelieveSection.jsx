@@ -15,24 +15,23 @@ export default function AboutBelieveSection() {
       }}
       >
         <div className="bg-white bg-opacity-95 rounded-md p-8 md:p-10 max-w-xl shadow-xl">
-          <h2 className="text-3xl md:text-4xl font-extrabold uppercase mb-4">
+          <h2 className="text-3xl md:text-4xl font-normal mb-4">
             <span className="text-black">We </span>
             <span className="text-gold">Believe</span>
           </h2>
 
           <ul className="space-y-4 text-gray-700 text-sm md:text-base leading-relaxed list-disc pl-5">
             <li>
-              The gifts of the Spirit are at work in the life of the believer, so our services are an experience
-              of the uninhibited flow of the Spirit through prayer, prophecies, and spiritual songs.
+              We believe the gifts of the Spirit are alive in every believer, and our gatherings are marked by the free and unhindered flow of the Spirit through prayer, prophecy, and songs birthed in worship.
             </li>
             <li>
-              That the Word of God is the ultimate standard for doctrine.
+              We hold the Word of God as our final and absolute authority in all doctrine.
             </li>
             <li>
-              That the Father&apos;s biggest display of affection towards us is in the redemptive work of Christ.
+              We affirm that the Father’s greatest expression of love is revealed in the redemptive work of Christ.
             </li>
             <li>
-              That we are blessed because righteousness is credited to us through the grace of our Lord Jesus Christ.
+              We are blessed beyond measure, clothed in His righteousness, made ours through the overflowing grace of our Lord Jesus Christ.
             </li>
           </ul>
         </div>

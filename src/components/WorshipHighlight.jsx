@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-
+import Link from 'next/link'
 export default function WorshipHighlight() {
   return (
     <section className="relative h-[90vh] w-full overflow-hidden">
@@ -24,7 +24,7 @@ export default function WorshipHighlight() {
           viewport={{ once: true }}
           className="text-3xl md:text-5xl font-bebas tracking-wide mb-4"
         >
-          WE BOAST IN <br /> CHRIST JESUS
+          We boast in <br /> Christ Jesus
         </motion.h2>
 
         <motion.p
@@ -34,18 +34,19 @@ export default function WorshipHighlight() {
           viewport={{ once: true }}
           className="max-w-xl mx-auto text-sm md:text-base text-gray-300"
         >
-          At Franchise Church, our boast is not in our name or our works, but in the finished work of Jesus. This is our message and our sound.
-        </motion.p>
-
-        <motion.button
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          viewport={{ once: true }}
-          className="mt-6 px-6 py-3 bg-yellow-600 text-white font-semibold rounded-md hover:bg-yellow-400 transition"
-        >
-          Learn More
-        </motion.button>
+At Franchise Church, our glory is not found in titles or achievements, but in the completed work of Christ. His victory is our proclamation, and His truth is the heartbeat of our worship.        </motion.p>
+    <Link href="/pages/about-us">
+      <motion.button
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        viewport={{ once: true }}
+        className="mt-6 px-6 py-3 bg-yellow-600 text-black font-semibold rounded-sm hover:text-white hover:bg-yellow-400 transition cursor-pointer"
+      >
+        Learn More
+      </motion.button>
+    </Link>
+        
       </div>
     </section>
   )

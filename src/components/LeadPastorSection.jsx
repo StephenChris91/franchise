@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 export default function LeadPastorSection() {
   return (
@@ -36,9 +37,11 @@ export default function LeadPastorSection() {
             the Word and discipling believers. He is a shepherd, a visionary, and a servant leader
             driven by the Spirit to raise people who live for Christ and influence their world.
           </p>
-          <button className="mt-6 px-6 py-3 bg-gold text-black font-semibold rounded-md hover:bg-yellow-400 transition">
-            Learn More
-          </button>
+          <Link href="/pages/about-us">
+            <button className="mt-6 px-6 py-3 bg-gold text-black font-semibold bg-yellow-400 rounded-md hover:bg-yellow-500 hover:text-white cursor-pointer transition-all">
+              Learn More
+            </button>
+          </Link>
         </motion.div>
       </div>
     </section>

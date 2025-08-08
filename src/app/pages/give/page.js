@@ -9,7 +9,7 @@ const GivePage = () => {
     <main className="bg-white">
       <GiveHero />
       <WaysToGive />
-      <OtherGivingOptions />
+      {/* <OtherGivingOptions /> */}
       <FaqSection />
     </main>
   );

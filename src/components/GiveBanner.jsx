@@ -6,7 +6,7 @@ export default function GiveBanner() {
       {/* Floating GIVE CARD */}
       <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-full max-w-6xl bg-[#ededed] text-black rounded-xl shadow-lg p-10 md:p-14 overflow-hidden h-96">
         <div className="relative z-10">
-          <h2 className="text-4xl md:text-5xl font-extrabold leading-tight text-black mb-4 font-bebas tracking-wide">
+          <h2 className="text-4xl md:text-5xl font-normal leading-tight text-black mb-4 font-bebas tracking-wide">
             Give to <span className="text-gold">Franchise Church</span>
           </h2>
           <p className="text-gray-700 text-sm mb-6">

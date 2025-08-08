@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-
+import Link from 'next/link'
 export default function HeroSection() {
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -23,19 +23,21 @@ export default function HeroSection() {
           transition={{ duration: 1 }}
           className="text-4xl md:text-6xl font-extrabold text-white leading-tight"
         >
-          We Envision All Men <br />
-          Celebrating Endless <br />
-          <span className="text-gold">Life in Christ</span>
+          A generation,<br />
+          Awakened to eternity<br />
+          <span className="text-gold">Rejoicing forever in Christ.</span>
         </motion.h1>
 
+<Link href="/pages/about-us">
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="mt-8 bg-gold text-black font-semibold px-6 py-3 rounded-md shadow-lg hover:bg-yellow-400 transition"
+          className="mt-8 text-black font-semibold px-6 py-3 rounded-sm bg-yellow-400 hover:bg-yellow-500 transition-all cursor-pointer"
         >
           Watch Live
         </motion.button>
+</Link>
       </div>
     </div>
   )

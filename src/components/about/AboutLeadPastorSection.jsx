@@ -27,22 +27,12 @@ export default function AboutLeadPastorSection() {
 
           {/* Paragraphs */}
           <p className="text-sm leading-relaxed">
-            Pastor Tosin Martins is the visionary founder and Lead Pastor of Franchise Church,
-            a fast-growing global ministry in Nigeria. He is renowned for his dynamic preaching, teaching, and music ministry.
-            His mission is to help people discover and confidently live out their God-given purpose through
-            the transformative power of the Gospel.
+            Tosin Martins serves as the founder and Lead Pastor of Franchise Church, a Kingdom-focused ministry with an expanding global footprint from its base in Nigeria. Carrying a unique blend of preaching, teaching, and music, his ministry inspires transformation and calls believers into the fullness of their God-ordained destiny. His heartbeat is to see lives reshaped by the Gospel until purpose becomes a lived reality.
           </p>
 
           <p className="text-sm leading-relaxed">
-            Pastor Tosin's ministry began during his time as at This Present House in Lagos, Nigeria,
-            where he grew under the ministry of Pastor Tony Rapu. This fellowship evolved into what is now Franchise Church,
-            a global church with a strong emphasis on teaching, missions, and empowering believers to fully express their faith in all aspects of life.
+            His pastoral journey was birthed in the community of This Present House, Lagos, under the guidance of Pastor Tony Rapu. From those early days of discipleship and service, a vision took root, one that has since flourished into Franchise Church, a mission-driven, teaching-centered ministry dedicated to raising believers who live their faith with conviction and impact in every sphere of influence.
           </p>
-
-          {/* Read More Button */}
-          <button className="w-fit border border-white text-white px-6 py-2 mt-2 text-sm uppercase tracking-widest hover:bg-[#af601a] hover:text-white transition rounded-sm cursor-pointer">
-            Read More
-          </button>
         </div>
       </div>
     </section>

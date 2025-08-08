@@ -47,19 +47,19 @@ export default function MovementSection() {
     <>
       <section className="bg-black text-white text-center py-24 px-4">
         <div className="mb-4">
-          <span className="inline-block bg-white/10 text-xs font-semibold px-4 py-1 rounded-full uppercase tracking-widest">
+          <span className="inline-block bg-white/10 text-xs font-semibold px-4 py-1 rounded-full tracking-widest">
             🔵 Global Reach
           </span>
         </div>
 
-        <h2 className="text-4xl md:text-5xl font-heading mb-4 leading-snug">
-          We are a move of God <br />
-          A Billion Souls in 10,000 Cities
+        <h2 className="text-4xl md:text-5xl mb-4 leading-snug">
+          Igniting a Global Awakening <br />
+          From City Streets to Nations’ Hearts
         </h2>
 
         <button
           onClick={() => setOpenModal(true)}
-          className="mt-4 px-6 py-2 rounded-full border border-white text-white font-bold uppercase text-sm hover:bg-white hover:text-black transition"
+          className="mt-4 px-6 py-2 rounded-full border border-white text-white font-bold uppercase text-sm hover:bg-white hover:text-black transition-all cursor-pointer"
         >
           Declare With Us
         </button>

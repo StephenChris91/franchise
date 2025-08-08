@@ -97,7 +97,7 @@ export default function SermonsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight">
+            <h2 className="text-4xl md:text-5xl font-normal text-gray-700 leading-tight">
               Life Giving <span className="text-[#af601a]">Messages</span>
             </h2>
             <p className="text-gray-600 mt-4 text-sm md:text-base max-w-lg">

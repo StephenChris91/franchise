@@ -47,11 +47,11 @@ const GiveHero = () => {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="mt-4 text-base md:text-lg text-white/90"
         >
-          Give towards our mission to reach a billion souls in ten thousand
-          cities with the message of the gospel.
+          Partner with us to spread the life-transforming message of the gospel
+          to the nations.
         </motion.p>
 
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
@@ -63,7 +63,7 @@ const GiveHero = () => {
           <button className="bg-transparent border border-white px-6 py-3 rounded-md font-semibold text-white hover:bg-white hover:text-black transition cursor-pointer">
             Other Ways to Give
           </button>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );
