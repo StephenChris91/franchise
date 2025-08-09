@@ -41,7 +41,7 @@ At Franchise Church, our glory is not found in titles or achievements, but in th
         whileInView={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
         viewport={{ once: true }}
-        className="mt-6 px-6 py-3 bg-yellow-600 text-black font-semibold rounded-sm hover:text-white hover:bg-yellow-400 transition cursor-pointer"
+        className="mt-4 px-6 py-2 rounded-sm border border-white bg-[#af601a] text-white font-normal text-sm hover:bg-white hover:text-black transition-all cursor-pointer"
       >
         Learn More
       </motion.button>

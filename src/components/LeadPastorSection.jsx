@@ -38,7 +38,7 @@ export default function LeadPastorSection() {
             driven by the Spirit to raise people who live for Christ and influence their world.
           </p>
           <Link href="/pages/about-us">
-            <button className="mt-6 px-6 py-3 bg-gold text-black font-semibold bg-yellow-400 rounded-md hover:bg-yellow-500 hover:text-white cursor-pointer transition-all">
+            <button className="mt-4 px-6 py-2 rounded-sm border border-white bg-[#af601a] text-white font-normal text-sm hover:bg-white hover:text-black transition-all cursor-pointer">
               Learn More
             </button>
           </Link>

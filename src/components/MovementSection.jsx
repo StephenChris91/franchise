@@ -59,9 +59,9 @@ export default function MovementSection() {
 
         <button
           onClick={() => setOpenModal(true)}
-          className="mt-4 px-6 py-2 rounded-full border border-white text-white font-bold uppercase text-sm hover:bg-white hover:text-black transition-all cursor-pointer"
+          className="mt-4 px-6 py-2 rounded-sm border border-white bg-[#af601a] text-white font-normal text-sm hover:bg-white hover:text-black transition-all cursor-pointer"
         >
-          Declare With Us
+          Listen to Our Declaration
         </button>
       </section>
 

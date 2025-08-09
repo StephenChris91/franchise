@@ -17,7 +17,7 @@ export default function EveryoneSection() {
   ]
 
   return (
-    <section className="bg-[#ededed] py-20 px-4 text-center lg:mb-62">
+    <section className="bg-[#ededed] py-20 px-4 text-center ">
       <div className="mb-12">
         <h2 className="text-3xl md:text-4xl font-bebas text-black tracking-wide">
           There’s a place <br /> <span className="text-gold">for everyone</span>

@@ -33,7 +33,7 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="mt-8 text-black font-semibold px-6 py-3 rounded-sm bg-yellow-400 hover:bg-yellow-500 transition-all cursor-pointer"
+          className="mt-4 px-6 py-2 rounded-sm border border-white bg-[#af601a] text-white font-normal text-sm hover:bg-white hover:text-black transition-all cursor-pointer"
         >
           Watch Live
         </motion.button>
