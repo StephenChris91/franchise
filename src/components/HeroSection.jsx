@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+
 export default function HeroSection() {
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -28,16 +29,20 @@ export default function HeroSection() {
           <span className="text-gold">Rejoicing forever in Christ.</span>
         </motion.h1>
 
-<Link href="/pages/about-us">
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="mt-4 px-6 py-2 rounded-sm border border-white bg-[#af601a] text-white font-normal text-sm hover:bg-white hover:text-black transition-all cursor-pointer"
+        <Link 
+          href="https://www.youtube.com/@thefranchisechurch" 
+          target="_blank" 
+          rel="noopener noreferrer"
         >
-          Watch Live
-        </motion.button>
-</Link>
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="mt-4 px-6 py-2 rounded-sm border border-white bg-[#af601a] text-white font-normal text-sm hover:bg-white hover:text-black transition-all cursor-pointer"
+          >
+            Watch Live
+          </motion.button>
+        </Link>
       </div>
     </div>
   )

@@ -9,7 +9,7 @@ export default function SiteNavbar() {
   const [isOpen, setIsOpen] = useState(false)
 
   const mainLinks = ['Home', 'About Us', 'Sermons', 'Give']
-  const ministries = ['Worship', 'Teens', 'Kids']
+  const ministries = ['Worship', , 'Franchise Kids']
   const resources = [
     'Membership classes',
     'Counselling',
@@ -112,9 +112,23 @@ export default function SiteNavbar() {
                   ))}
                   <h4 className="text-sm uppercase text-gray-400 mt-4 mb-2">Media</h4>
                   {media.map((item) => (
-                    <p key={item} className="text-sm mb-1">
-                      {item}
-                    </p>
+                    // <p key={item} className="text-sm mb-1">
+                    //   {item}
+                    // </p>
+                    <Link 
+                              href="https://www.youtube.com/@thefranchisechurch" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                            >
+                              <motion.button
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1 }}
+                                className="text-white font-normal text-sm cursor-pointer"
+                              >
+                                {item}
+                              </motion.button>
+                            </Link>
                   ))}
                 </div>
               </div>
