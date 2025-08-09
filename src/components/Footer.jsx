@@ -32,8 +32,8 @@ export default function SiteFooter() {
           <p className="text-gray-50">info@franchiselagos.org</p>
           <p className="text-gray-50">+234 123 456 7890</p>
           <div className="flex gap-4 mt-2 text-lg text-gold">
-            <a href="https://twitter.com" target="_blank"><BsTwitter /></a>
-            <a href="https://instagram.com" target="_blank"><BsInstagram /></a>
+            <a href="https://x.com/franchisechurch" target="_blank"><BsTwitter /></a>
+            <a href="https://www.instagram.com/thefranchisechurch/" target="_blank"><BsInstagram /></a>
           </div>
         </div>
       </div>
