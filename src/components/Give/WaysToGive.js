@@ -6,24 +6,15 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const WaysToGive = () => {
   const [activeTab, setActiveTab] = useState("NGN");
-  const [copied, setCopied] = useState(""); // stores the last copied text
+  const [copied, setCopied] = useState("");
   const timeoutRef = useRef(null);
 
+  // ✅ Only Access Bank, Rent removed
   const accounts = {
     NGN: [
       {
         bank: "Access Bank",
-        accounts: [
-          { label: "Main Account", number: "0692529997" },
-          { label: "Rent Account", number: "1911578888" },
-        ],
-      },
-      {
-        bank: "Providus Bank",
-        accounts: [
-          { label: "Main Account", number: "1911603344" },
-          { label: "Building Account", number: "1911506050" },
-        ],
+        accounts: [{ label: "Main Account", number: "0107037939" }],
       },
     ],
   };
@@ -32,20 +23,23 @@ const WaysToGive = () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(text);
-
-      // Clear any existing timer and start a new one
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => setCopied(""), 2000);
     } catch {
-      // Optional: you could set an error toast here instead
+      /* no-op */
     }
   };
 
   return (
-    <section className="py-16 px-4 bg-white relative">
+    <motion.section
+      className="py-16 px-4 bg-white relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.1, ease: "easeOut" }} // ✨ slow fade-in
+    >
       <div className="max-w-6xl mx-auto text-center">
         {/* Title */}
-        <h2 className="text-4xl md:text-4xl font-normal mb-3 ">
+        <h2 className="text-4xl md:text-4xl font-normal mb-3">
           <span className="text-black">Ways to </span>
           <span className="text-[#af601a]">Give</span>
         </h2>
@@ -73,16 +67,18 @@ const WaysToGive = () => {
 
         {/* NGN ACCOUNTS */}
         {activeTab === "NGN" ? (
-          <div className="grid md:grid-cols-2 gap-6 text-left">
+          // ✅ Center the single card nicely
+          <div className="grid grid-cols-1 place-items-center">
             {accounts.NGN.map((bank, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg shadow-sm p-6 bg-white"
+                className="border border-gray-200 rounded-lg shadow-sm p-6 bg-white w-full max-w-lg"
               >
-                <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-800">
+                <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-800 justify-center">
                   <Landmark className="w-5 h-5 text-gray-800" />
                   {bank.bank}
                 </h4>
+
                 <ul className="space-y-3">
                   {bank.accounts.map((acc, i) => {
                     const isJustCopied = copied === acc.number;
@@ -97,6 +93,7 @@ const WaysToGive = () => {
                           </p>
                           <p className="text-sm text-gray-800">{acc.number}</p>
                         </div>
+
                         <button
                           onClick={() => copyToClipboard(acc.number)}
                           title={
@@ -126,7 +123,7 @@ const WaysToGive = () => {
             ))}
           </div>
         ) : (
-          // DOMICILIARY ACCOUNT COMING SOON
+          // Domiciliary placeholder
           <div className="bg-blue-50 p-6 rounded-lg shadow max-w-4xl mx-auto text-center border border-blue-100">
             <CheckCircle2 className="w-8 h-8 text-blue-800 mx-auto mb-4 opacity-60" />
             <h4 className="text-lg font-semibold text-gray-800 mb-2">
@@ -137,7 +134,7 @@ const WaysToGive = () => {
         )}
       </div>
 
-      {/* Toast */}
+      {/* Copy Toast */}
       <AnimatePresence>
         {copied && (
           <motion.div
@@ -150,16 +147,14 @@ const WaysToGive = () => {
             aria-live="polite"
             role="status"
           >
-            <div className="flex items-center gap-3 bg-gray-900 text-white rounded-lg shadow-lg px-4 py-3">
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <span className="text-sm">
-                Account number <strong>{copied}</strong> copied
-              </span>
+            <div className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg shadow-lg">
+              <CheckCircle2 className="w-5 h-5 text-green-400" />
+              <span className="text-sm">Account number copied</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </section>
+    </motion.section>
   );
 };
 

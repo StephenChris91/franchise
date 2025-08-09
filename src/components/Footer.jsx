@@ -8,7 +8,7 @@ import GiveBanner from './GiveBanner'
 export default function SiteFooter() {
   return (
     <>
-    <GiveBanner />
+    {/* <GiveBanner /> */}
     <Footer container className="bg-black text-white px-4 py-10 rounded-none border-t border-gray-700" id='footer'>
       <div className="w-full max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Logo + Description */}

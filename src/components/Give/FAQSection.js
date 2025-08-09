@@ -8,7 +8,7 @@ const faqs = [
   {
     question: "How is my donation used?",
     answer:
-      "Your donation supports the mission of Celebration Church International to spread the gospel and make disciples around the world. Contributions go towards ministry programs, church operations, cell churches, community outreach, and special initiatives that help us bring transformation and impact to individuals and communities.",
+      "Your donation fuels the mission of The Franchise Church to spread the gospel and make disciples across the world. Every contribution supports ministry programs, church operations, outreach efforts, and special initiatives designed to bring transformation and lasting impact to individuals and communities.",
   },
   {
     question: "Can I choose where my donation goes?",
@@ -18,7 +18,7 @@ const faqs = [
   {
     question: "Are there other ways to give besides online?",
     answer:
-      "Absolutely. You can give through bank transfers, USSD, cash envelopes at services, or via local campus collection points.",
+      "Absolutely. You can give through bank transfers, USSD, cash envelopes at services.",
   },
   {
     question: "Is my payment information secured?",
@@ -32,8 +32,7 @@ const faqs = [
   },
   {
     question: "Who do I contact with my questions?",
-    answer:
-      "You can contact our admin team through the contact form or email us at info@celebrationchurch.org.",
+    answer: "You can contact our admin team through the contact form",
   },
 ];
 
