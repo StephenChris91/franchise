@@ -29,9 +29,9 @@ export default function HeroSection() {
           <span className="text-gold">Rejoicing forever in Christ.</span>
         </motion.h1>
 
-        <Link 
-          href="https://www.youtube.com/@thefranchisechurch" 
-          target="_blank" 
+        <Link
+          href="https://www.youtube.com/@thefranchisechurch"
+          target="_blank"
           rel="noopener noreferrer"
         >
           <motion.button

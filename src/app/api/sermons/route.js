@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
+// Ensure SUPABASE_SERVICE_ROLE_KEY is set as a server-only env var.
+// NEXT_PUBLIC_SUPABASE_URL can be public, but the service key must not.
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -7,7 +9,10 @@ const supabase = createClient(
 
 export async function GET() {
   try {
-    const { data: sermons, error } = await supabase.from("sermons").select("*");
+    const { data: sermons, error } = await supabase
+      .from("sermons")
+      .select("*")
+      .order("date", { ascending: false });
 
     if (error) {
       console.error("Supabase error:", error);
@@ -15,13 +20,15 @@ export async function GET() {
     }
 
     const signedSermons = await Promise.all(
-      sermons.map(async (sermon) => {
-        const audioRes = await supabase.storage
-          .from("sermons-audio")
-          .createSignedUrl(sermon.audio_url, 60 * 60);
+      (sermons || []).map(async (sermon) => {
+        const audioRes = sermon.audio_url
+          ? await supabase.storage
+              .from("sermons-audio")
+              .createSignedUrl(sermon.audio_url, 60 * 60)
+          : null;
 
         let thumbnailRes = null;
-        if (sermon.thumbnail) {
+        if (sermon.thumbnail && !sermon.thumbnail.startsWith("http")) {
           thumbnailRes = await supabase.storage
             .from("sermons-thumbnail")
             .createSignedUrl(sermon.thumbnail, 60 * 60);
@@ -31,7 +38,9 @@ export async function GET() {
           ...sermon,
           audioUrl: audioRes?.data?.signedUrl || null,
           thumbnail:
-            thumbnailRes?.data?.signedUrl || "/assets/sermon-fallback.jpg",
+            thumbnailRes?.data?.signedUrl ||
+            sermon.thumbnail ||
+            "/assets/sermon-fallback.jpg",
         };
       })
     );

@@ -1,39 +1,28 @@
 "use client";
 
-import { supabase } from "@/utils/supabase";
-
-const handleCompressedUpload = async (file) => {
-  const formData = new FormData();
-  formData.append("audio", file);
-
-  const res = await fetch("/api/compress", {
-    method: "POST",
-    body: formData,
-  });
-
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Compression/upload failed");
-
-  return data.filename;
-};
-
-// 🧠 Fix: Handle all input fields and update form state
 export const handleSermonChange = (e, setForm, audioRef, setDuration) => {
   const { name, value, files } = e.target;
 
   if (name === "audioFile") {
-    const file = files[0];
-    setForm((prev) => ({ ...prev, audioFile: file }));
-    const url = URL.createObjectURL(file);
-    audioRef.current.src = url;
+    const file = files?.[0];
+    if (file) {
+      setForm((prev) => ({ ...prev, audioFile: file }));
+      const url = URL.createObjectURL(file);
+      if (audioRef?.current) {
+        audioRef.current.src = url;
+        audioRef.current.onloadedmetadata = () => {
+          const secs = Math.round(audioRef.current.duration || 0);
+          setDuration(secs);
+        };
+      }
+    }
   } else if (name === "thumbnailFile") {
-    setForm((prev) => ({ ...prev, thumbnailFile: files[0] }));
+    setForm((prev) => ({ ...prev, thumbnailFile: files?.[0] || null }));
   } else {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 };
 
-// 📤 Upload to Supabase
 export const handleSermonUpload = async (
   e,
   form,
@@ -47,32 +36,31 @@ export const handleSermonUpload = async (
   try {
     const { title, speaker, date, audioFile, thumbnailFile, categories } = form;
 
-    if (!title?.trim() || !date?.trim() || !audioFile) {
+    if (!title?.trim() || !date?.trim() || !audioFile || !duration) {
       alert("Please complete all required fields before submitting.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("audio", audioFile);
     formData.append("title", title);
     formData.append("speaker", speaker || "");
     formData.append("date", date);
-    formData.append("duration", duration);
+    formData.append("duration", String(duration));
     formData.append("categories", categories || "");
-    if (thumbnailFile) {
-      formData.append("thumbnailFile", thumbnailFile);
-    }
+    formData.append("audio", audioFile);
+    if (thumbnailFile) formData.append("thumbnailFile", thumbnailFile);
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/sermons`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    // 👉 Point to your Express API (set this in .env.local)
+    const base = process.env.NEXT_PUBLIC_BACKEND_URL; // e.g. http://localhost:4000
+    const res = await fetch(`${base}/api/sermons`, {
+      method: "POST",
+      body: formData,
+      // Note: no Content-Type header; the browser sets the multipart boundary
+      credentials: "include",
+    });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Upload failed");
+    if (!res.ok) throw new Error(data?.error || "Upload failed");
 
     alert("✅ Sermon uploaded successfully");
     resetForm();

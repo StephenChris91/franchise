@@ -9,16 +9,91 @@ import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// export default function SermonsPage() {
+//   const [sermons, setSermons] = useState([]);
+//   const [filteredSermons, setFilteredSermons] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [loadingMore, setLoadingMore] = useState(false);
+//   const [hasMore, setHasMore] = useState(true);
+//   const { setAudio } = useAudioPlayer();
+//   const observerRef = useRef();
+//   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+//   const limit = 8;
+
+//   const fetchSermons = async (offset = 0) => {
+//     const res = await fetch(
+//       `${backendUrl}/api/sermons?offset=${offset}&limit=${limit}`
+//     );
+//     const data = await res.json();
+
+//     if (!res.ok) throw new Error(data.error || "Failed to fetch");
+
+//     return data.sermons || [];
+//   };
+
+//   useEffect(() => {
+//     (async () => {
+//       try {
+//         const initialSermons = await fetchSermons();
+//         setSermons(initialSermons);
+//         setFilteredSermons(initialSermons);
+//         if (initialSermons.length < limit) setHasMore(false);
+//       } catch (err) {
+//         console.error("Fetch error:", err);
+//         toast.error("Failed to load sermons");
+//       } finally {
+//         setLoading(false);
+//       }
+//     })();
+//   }, [backendUrl]);
+
+//   // 👇 Infinite Scroll Handler
+//   useEffect(() => {
+//     if (!hasMore || loadingMore) return;
+
+//     const observer = new IntersectionObserver(
+//       async ([entry]) => {
+//         if (entry.isIntersecting) {
+//           setLoadingMore(true);
+//           try {
+//             const offset = sermons.length;
+//             const moreSermons = await fetchSermons(offset);
+
+//             if (moreSermons.length === 0) {
+//               setHasMore(false);
+//               toast.info("All sermons loaded");
+//               return;
+//             }
+
+//             const updated = [...sermons, ...moreSermons];
+//             setSermons(updated);
+//             setFilteredSermons(updated);
+//           } catch (err) {
+//             toast.error("Failed to load more sermons");
+//           } finally {
+//             setLoadingMore(false);
+//           }
+//         }
+//       },
+//       { rootMargin: "100px" }
+//     );
+
+//     const current = observerRef.current;
+//     if (current) observer.observe(current);
+
+//     return () => {
+//       if (current) observer.unobserve(current);
+//     };
+//   }, [sermons, loadingMore, hasMore, backendUrl]);
+
+// pages/sermons/page.js - CORRECTED PAGINATION
 export default function SermonsPage() {
   const [sermons, setSermons] = useState([]);
   const [filteredSermons, setFilteredSermons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const { setAudio } = useAudioPlayer();
-  const observerRef = useRef();
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const limit = 8;
+  const [pagination, setPagination] = useState(null); // ✅ Store pagination info
 
   const fetchSermons = async (offset = 0) => {
     const res = await fetch(
@@ -27,6 +102,10 @@ export default function SermonsPage() {
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.error || "Failed to fetch");
+
+    // ✅ Use backend pagination info
+    setPagination(data.pagination);
+    setHasMore(data.pagination?.hasMore ?? false);
 
     return data.sermons || [];
   };
@@ -37,7 +116,6 @@ export default function SermonsPage() {
         const initialSermons = await fetchSermons();
         setSermons(initialSermons);
         setFilteredSermons(initialSermons);
-        if (initialSermons.length < limit) setHasMore(false);
       } catch (err) {
         console.error("Fetch error:", err);
         toast.error("Failed to load sermons");
@@ -45,9 +123,9 @@ export default function SermonsPage() {
         setLoading(false);
       }
     })();
-  }, [backendUrl]);
+  }, []);
 
-  // 👇 Infinite Scroll Handler
+  // ✅ Fixed infinite scroll with proper pagination
   useEffect(() => {
     if (!hasMore || loadingMore) return;
 
@@ -56,7 +134,8 @@ export default function SermonsPage() {
         if (entry.isIntersecting) {
           setLoadingMore(true);
           try {
-            const offset = sermons.length;
+            // ✅ Use pagination info from backend
+            const offset = pagination?.nextOffset || sermons.length;
             const moreSermons = await fetchSermons(offset);
 
             if (moreSermons.length === 0) {
@@ -70,6 +149,7 @@ export default function SermonsPage() {
             setFilteredSermons(updated);
           } catch (err) {
             toast.error("Failed to load more sermons");
+            console.error("Load more error:", err);
           } finally {
             setLoadingMore(false);
           }
@@ -84,7 +164,7 @@ export default function SermonsPage() {
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [sermons, loadingMore, hasMore, backendUrl]);
+  }, [sermons, loadingMore, hasMore, pagination]);
 
   const handlePlay = (sermon) => {
     setAudio(sermon);
