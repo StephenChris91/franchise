@@ -131,7 +131,7 @@ export default function CommentSection({
         </div>
       ) : isLoggedIn && !isApproved ? (
         <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          Your account is awaiting approval from our pastoral team. You'll be
+          Your account is awaiting approval from our pastoral team. You&apos;ll be
           able to comment once approved.
         </div>
       ) : (

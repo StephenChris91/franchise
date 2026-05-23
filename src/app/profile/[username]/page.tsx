@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { db, profiles, users } from "../../../../db";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
+import Link from "next/link";
 import { User } from "lucide-react";
 import { ProfileRow } from "@/components/profile/ProfileRow";
 
@@ -103,12 +104,12 @@ export default async function PublicProfilePage({
 
         {isOwn && (
           <div className="mt-6 text-center">
-            <a
+            <Link
               href="/profile/edit"
               className="inline-block px-5 py-2.5 rounded-lg bg-[#af601a] text-white text-sm font-medium hover:bg-[#c47020] transition"
             >
               Edit your profile
-            </a>
+            </Link>
           </div>
         )}
       </div>

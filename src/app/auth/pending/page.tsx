@@ -10,11 +10,11 @@ export default function PendingPage() {
         <Clock className="text-[#af601a]" size={32} />
       </div>
       <h1 className="text-2xl font-bold text-white mb-3">
-        You're on the list
+        You&apos;re on the list
       </h1>
       <p className="text-white/60 text-sm leading-relaxed mb-6 max-w-sm mx-auto">
         Your registration is being reviewed by our pastoral team. We typically
-        respond within 24–48 hours. You'll receive an email once approved.
+        respond within 24–48 hours. You&apos;ll receive an email once approved.
       </p>
       <p className="text-white/40 text-xs mb-8">
         Questions? Reach us at{" "}
