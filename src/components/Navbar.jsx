@@ -4,11 +4,12 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FiMenu, FiX } from 'react-icons/fi'
+import NavbarAuth from './NavbarAuth'
 
 export default function SiteNavbar() {
   const [isOpen, setIsOpen] = useState(false)
 
-  const mainLinks = ['Home', 'About Us', 'Sermons', 'Give']
+  const mainLinks = ['Home', 'About Us', 'Sermons', 'Blog', 'Give']
   const ministries = ['Worship', , 'Franchise Kids']
   const resources = [
     'Membership classes',
@@ -31,14 +32,17 @@ export default function SiteNavbar() {
 </Link>
 
 
-        {/* Hamburger Icon */}
-        <button
-          onClick={() => setIsOpen(true)}
-          className="text-2xl text-white cursor-pointer"
-          aria-label="Open menu"
-        >
-          <FiMenu />
-        </button>
+        <div className="flex items-center gap-3">
+          <NavbarAuth />
+          {/* Hamburger Icon */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="text-2xl text-white cursor-pointer"
+            aria-label="Open menu"
+          >
+            <FiMenu />
+          </button>
+        </div>
       </nav>
 
       {/* Fullscreen Overlay */}
@@ -69,7 +73,7 @@ export default function SiteNavbar() {
               <div className="flex-1">
                 {mainLinks.map((link) => {
   const path = link.toLowerCase().replace(/\s+/g, '-')
-  const href = path === 'home' ? '/' : `/pages/${path}`
+  const href = path === 'home' ? '/' : path === 'blog' ? '/blog' : `/pages/${path}`
   return (
     <Link
       key={link}

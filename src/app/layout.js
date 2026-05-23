@@ -1,10 +1,8 @@
-import SiteNavbar from "@/components/Navbar";
 import "./globals.css";
-import { Montserrat, Roboto, Oswald, Ubuntu } from "next/font/google";
-import SiteFooter from "@/components/Footer";
-import { AudioPlayerProvider } from "@/context/AudioPlayerContext";
-import AudioPlayerBar from "@/components/sermons/AudioPlayerBar";
+import { Ubuntu } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+import SiteChrome from "@/components/SiteChrome";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -27,13 +25,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${ubuntu.variable} ${ubuntuBody.variable}`}>
       <body className="font-body">
-        <AudioPlayerProvider>
-          <SiteNavbar />
-          {children}
-          <SiteFooter />
-          <AudioPlayerBar />
-        </AudioPlayerProvider>
-        <Toaster position="top-right" />
+        <SessionProviderWrapper>
+          <SiteChrome>
+            {children}
+          </SiteChrome>
+          <Toaster position="top-right" />
+        </SessionProviderWrapper>
       </body>
     </html>
   );

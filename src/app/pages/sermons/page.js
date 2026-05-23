@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Spinner } from "flowbite-react";
+import { Loader2 } from "lucide-react";
 import SermonCard from "@/components/sermons/SermonsCard";
 import SermonFilters from "@/components/sermons/SermonFilters";
 import AudioPlayerBar from "@/components/sermons/AudioPlayerBar";
@@ -9,91 +9,17 @@ import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// export default function SermonsPage() {
-//   const [sermons, setSermons] = useState([]);
-//   const [filteredSermons, setFilteredSermons] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [loadingMore, setLoadingMore] = useState(false);
-//   const [hasMore, setHasMore] = useState(true);
-//   const { setAudio } = useAudioPlayer();
-//   const observerRef = useRef();
-//   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-//   const limit = 8;
-
-//   const fetchSermons = async (offset = 0) => {
-//     const res = await fetch(
-//       `${backendUrl}/api/sermons?offset=${offset}&limit=${limit}`
-//     );
-//     const data = await res.json();
-
-//     if (!res.ok) throw new Error(data.error || "Failed to fetch");
-
-//     return data.sermons || [];
-//   };
-
-//   useEffect(() => {
-//     (async () => {
-//       try {
-//         const initialSermons = await fetchSermons();
-//         setSermons(initialSermons);
-//         setFilteredSermons(initialSermons);
-//         if (initialSermons.length < limit) setHasMore(false);
-//       } catch (err) {
-//         console.error("Fetch error:", err);
-//         toast.error("Failed to load sermons");
-//       } finally {
-//         setLoading(false);
-//       }
-//     })();
-//   }, [backendUrl]);
-
-//   // 👇 Infinite Scroll Handler
-//   useEffect(() => {
-//     if (!hasMore || loadingMore) return;
-
-//     const observer = new IntersectionObserver(
-//       async ([entry]) => {
-//         if (entry.isIntersecting) {
-//           setLoadingMore(true);
-//           try {
-//             const offset = sermons.length;
-//             const moreSermons = await fetchSermons(offset);
-
-//             if (moreSermons.length === 0) {
-//               setHasMore(false);
-//               toast.info("All sermons loaded");
-//               return;
-//             }
-
-//             const updated = [...sermons, ...moreSermons];
-//             setSermons(updated);
-//             setFilteredSermons(updated);
-//           } catch (err) {
-//             toast.error("Failed to load more sermons");
-//           } finally {
-//             setLoadingMore(false);
-//           }
-//         }
-//       },
-//       { rootMargin: "100px" }
-//     );
-
-//     const current = observerRef.current;
-//     if (current) observer.observe(current);
-
-//     return () => {
-//       if (current) observer.unobserve(current);
-//     };
-//   }, [sermons, loadingMore, hasMore, backendUrl]);
-
-// pages/sermons/page.js - CORRECTED PAGINATION
 export default function SermonsPage() {
   const [sermons, setSermons] = useState([]);
   const [filteredSermons, setFilteredSermons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [pagination, setPagination] = useState(null); // ✅ Store pagination info
+  const [pagination, setPagination] = useState(null);
+  const { setAudio } = useAudioPlayer();
+  const observerRef = useRef();
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const limit = 8;
 
   const fetchSermons = async (offset = 0) => {
     const res = await fetch(
@@ -103,7 +29,6 @@ export default function SermonsPage() {
 
     if (!res.ok) throw new Error(data.error || "Failed to fetch");
 
-    // ✅ Use backend pagination info
     setPagination(data.pagination);
     setHasMore(data.pagination?.hasMore ?? false);
 
@@ -123,9 +48,9 @@ export default function SermonsPage() {
         setLoading(false);
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ✅ Fixed infinite scroll with proper pagination
   useEffect(() => {
     if (!hasMore || loadingMore) return;
 
@@ -134,7 +59,6 @@ export default function SermonsPage() {
         if (entry.isIntersecting) {
           setLoadingMore(true);
           try {
-            // ✅ Use pagination info from backend
             const offset = pagination?.nextOffset || sermons.length;
             const moreSermons = await fetchSermons(offset);
 
@@ -160,10 +84,7 @@ export default function SermonsPage() {
 
     const current = observerRef.current;
     if (current) observer.observe(current);
-
-    return () => {
-      if (current) observer.unobserve(current);
-    };
+    return () => { if (current) observer.unobserve(current); };
   }, [sermons, loadingMore, hasMore, pagination]);
 
   const handlePlay = (sermon) => {
@@ -204,7 +125,7 @@ export default function SermonsPage() {
         {/* Sermon Grid */}
         {loading ? (
           <div className="flex justify-center mt-20">
-            <Spinner size="xl" color="pink" />
+            <Loader2 className="animate-spin text-[#af601a]" size={48} />
           </div>
         ) : filteredSermons.length > 0 ? (
           <>
@@ -219,8 +140,8 @@ export default function SermonsPage() {
             </section>
             <div ref={observerRef} className="h-1" />
             {loadingMore && (
-              <div className="text-center mt-4">
-                <Spinner size="md" color="gray" />
+              <div className="flex justify-center mt-4">
+                <Loader2 className="animate-spin text-gray-500" size={28} />
               </div>
             )}
           </>
