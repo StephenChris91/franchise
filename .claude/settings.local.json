@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(p.dependencies\\).filter\\(k => ['next-auth','drizzle-orm','@neondatabase/serverless','@auth/drizzle-adapter','bcryptjs','resend','zod','react-hook-form'].includes\\(k\\)\\), null, 2\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\steph\\\\.claude\\\\projects\\\\C--Users-steph-Music-Franchise-franchise\\\\memory\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('next-auth:', p.dependencies['next-auth']\\); console.log\\('next:', p.dependencies['next']\\); console.log\\('@auth/drizzle-adapter:', p.dependencies['@auth/drizzle-adapter']\\); console.log\\('drizzle-orm:', p.dependencies['drizzle-orm']\\); console.log\\('zod:', p.dependencies['zod']\\); console.log\\('@hookform/resolvers:', p.dependencies['@hookform/resolvers']\\);\")",
+      "Bash(node -e \"try{const m=require\\('./node_modules/zod/package.json'\\); console.log\\('zod installed:', m.version\\);}catch\\(e\\){console.log\\('not installed'\\);}\")",
+      "Bash(node -e \"try{const m=require\\('./node_modules/@hookform/resolvers/package.json'\\); console.log\\('@hookform/resolvers installed:', m.version\\);}catch\\(e\\){console.log\\('not installed'\\);}\")",
+      "Bash(node -e \"try{const m=require\\('./node_modules/drizzle-orm/package.json'\\); console.log\\('drizzle-orm installed:', m.version\\);}catch\\(e\\){console.log\\('not installed'\\);}\")",
+      "Bash(npm audit *)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); Object.entries\\(j.vulnerabilities||{}\\).forEach\\(\\([k,v]\\)=>console.log\\(v.severity.toUpperCase\\(\\).padEnd\\(10\\), k, '-', v.via?.map\\(x=>typeof x==='string'?x:x.title\\).join\\(', '\\)\\)\\)\")",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/next-auth/package.json'\\).version\\)\")",
+      "Bash(npm run *)",
+      "Bash(npx next *)",
+      "Bash(cat \"/c/Users/steph/AppData/Local/Temp/claude/C--Users-steph-Music-Franchise-franchise/87a2eb5b-4bfb-43c3-bb86-6ef2bf177f8b/tasks/b0luuc0d1.output\")",
+      "Bash(npx tsc *)",
+      "Bash(grep -E \"^[^.]*\\\\.\\(tsx|ts|jsx|js\\)$\")",
+      "Bash(npm uninstall *)",
+      "Bash(rm -rf .flowbite-react)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('flowbite-react still in deps?', 'flowbite-react' in \\(p.dependencies||{}\\)\\);\")",
+      "Bash(node -e \"const m = require\\('./node_modules/framer-motion/package.json'\\); console.log\\('framer-motion:', m.version\\); const exp = m.exports?.['.']?.import || 'unknown'; console.log\\('has AnimatePresence export:', JSON.stringify\\(exp\\).includes\\('AnimatePresence'\\) || 'check source directly'\\);\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\steph\\\\Music\\\\Franchise\\\\franchise\\\\src\\\\app\\\\api\\\\posts\\\\[slug]\\\\view\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\steph\\\\Music\\\\Franchise\\\\franchise\\\\src\\\\app\\\\blog\\\\[slug]\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\steph\\\\Music\\\\Franchise\\\\franchise\\\\src\\\\app\\\\blog\\\\category\\\\[category]\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(npm ls *)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\steph\\\\Music\\\\Franchise\\\\franchise\\\\src\\\\app\\\\social\\\\groups\\\\[slug]\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\steph\\\\Music\\\\Franchise\\\\franchise\\\\src\\\\app\\\\social\\\\members\\\\[username]\")"
+    ]
+  }
+}

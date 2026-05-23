@@ -48,10 +48,13 @@ function LoginForm() {
     const session = await res.json();
     const status = session?.user?.approvalStatus;
 
+    const role = session?.user?.role;
     if (status === "pending") {
       router.push("/auth/pending");
     } else if (status === "rejected") {
       router.push("/auth/rejected");
+    } else if (role === "admin" || role === "pastor") {
+      router.push("/admin/blog");
     } else {
       router.push(callbackUrl);
     }

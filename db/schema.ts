@@ -8,6 +8,7 @@ import {
   integer,
   index,
   uniqueIndex,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -260,3 +261,245 @@ export type NewBlogPost = typeof blogPosts.$inferInsert;
 export type PostView = typeof postViews.$inferSelect;
 export type PostReaction = typeof postReactions.$inferSelect;
 export type PostComment = typeof postComments.$inferSelect;
+
+// ─── Social enums ─────────────────────────────────────────────────────────────
+
+export const groupTypeEnum = pgEnum("group_type", [
+  "ministry",
+  "interest",
+  "small_group",
+  "leadership",
+]);
+
+export const groupVisibilityEnum = pgEnum("group_visibility", [
+  "public",
+  "private",
+]);
+
+export const groupMemberRoleEnum = pgEnum("group_member_role", [
+  "member",
+  "moderator",
+  "leader",
+]);
+
+export const socialPostTypeEnum = pgEnum("social_post_type", [
+  "regular",
+  "prayer",
+  "announcement",
+  "testimony",
+]);
+
+export const socialReactionTypeEnum = pgEnum("social_reaction_type", [
+  "like",
+  "amen",
+  "praying",
+  "heart",
+]);
+
+export const reportReasonEnum = pgEnum("report_reason", [
+  "spam",
+  "inappropriate",
+  "harassment",
+  "misinformation",
+  "other",
+]);
+
+export const reportStatusEnum = pgEnum("report_status", [
+  "pending",
+  "resolved",
+  "dismissed",
+]);
+
+export const notificationTypeEnum = pgEnum("notification_type", [
+  "comment_on_post",
+  "reaction_on_post",
+  "group_join",
+  "mention",
+  "prayer_reaction",
+  "new_post_in_group",
+]);
+
+export const notificationEntityTypeEnum = pgEnum("notification_entity_type", [
+  "post",
+  "comment",
+  "group",
+  "user",
+]);
+
+// ─── Groups ───────────────────────────────────────────────────────────────────
+
+export const groups = pgTable(
+  "groups",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    slug: text("slug").notNull(),
+    name: text("name").notNull(),
+    description: text("description").notNull().default(""),
+    groupType: groupTypeEnum("group_type").notNull(),
+    visibility: groupVisibilityEnum("visibility").notNull().default("public"),
+    coverImageUrl: text("cover_image_url").notNull().default(""),
+    createdBy: text("created_by").references(() => users.id, { onDelete: "set null" }),
+    memberCount: integer("member_count").notNull().default(0),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    uniqueIndex("groups_slug_idx").on(t.slug),
+    index("groups_type_idx").on(t.groupType),
+  ]
+);
+
+export const groupMembers = pgTable(
+  "group_members",
+  {
+    groupId: text("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: groupMemberRoleEnum("role").notNull().default("member"),
+    joinedAt: timestamp("joined_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.groupId, t.userId] }),
+    index("group_members_user_idx").on(t.userId),
+  ]
+);
+
+// ─── Social posts ─────────────────────────────────────────────────────────────
+
+export const socialPosts = pgTable(
+  "social_posts",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    groupId: text("group_id").references(() => groups.id, { onDelete: "cascade" }),
+    content: text("content").notNull(), // Tiptap JSON string
+    postType: socialPostTypeEnum("post_type").notNull().default("regular"),
+    mediaUrls: jsonb("media_urls").$type<string[]>().notNull().default([]),
+    isPinned: boolean("is_pinned").notNull().default(false),
+    isHidden: boolean("is_hidden").notNull().default(false),
+    reactionCount: integer("reaction_count").notNull().default(0),
+    commentCount: integer("comment_count").notNull().default(0),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    index("social_posts_author_idx").on(t.authorId),
+    index("social_posts_group_idx").on(t.groupId),
+    index("social_posts_type_idx").on(t.postType),
+    index("social_posts_created_idx").on(t.createdAt),
+  ]
+);
+
+export const socialPostReactions = pgTable(
+  "social_post_reactions",
+  {
+    postId: text("post_id")
+      .notNull()
+      .references(() => socialPosts.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    reactionType: socialReactionTypeEnum("reaction_type").notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.postId, t.userId, t.reactionType] }),
+    index("social_reactions_post_idx").on(t.postId),
+  ]
+);
+
+export const socialPostComments = pgTable(
+  "social_post_comments",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    postId: text("post_id")
+      .notNull()
+      .references(() => socialPosts.id, { onDelete: "cascade" }),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    parentId: text("parent_id").references(
+      (): AnyPgColumn => socialPostComments.id,
+      { onDelete: "cascade" }
+    ),
+    content: text("content").notNull(),
+    isHidden: boolean("is_hidden").notNull().default(false),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    index("social_comments_post_idx").on(t.postId),
+    index("social_comments_parent_idx").on(t.parentId),
+  ]
+);
+
+// ─── Content reports ──────────────────────────────────────────────────────────
+
+export const contentReports = pgTable("content_reports", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  reporterId: text("reporter_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  reportedPostId: text("reported_post_id").references(() => socialPosts.id, {
+    onDelete: "set null",
+  }),
+  reportedCommentId: text("reported_comment_id").references(
+    () => socialPostComments.id,
+    { onDelete: "set null" }
+  ),
+  reason: reportReasonEnum("reason").notNull(),
+  notes: text("notes").notNull().default(""),
+  status: reportStatusEnum("status").notNull().default("pending"),
+  resolvedBy: text("resolved_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at", { mode: "date" }),
+});
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    actorId: text("actor_id").references(() => users.id, { onDelete: "set null" }),
+    notificationType: notificationTypeEnum("notification_type").notNull(),
+    entityType: notificationEntityTypeEnum("entity_type").notNull(),
+    entityId: text("entity_id").notNull(),
+    isRead: boolean("is_read").notNull().default(false),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    index("notifications_user_idx").on(t.userId),
+    index("notifications_read_idx").on(t.userId, t.isRead),
+  ]
+);
+
+// ─── Social types ─────────────────────────────────────────────────────────────
+
+export type Group = typeof groups.$inferSelect;
+export type GroupMember = typeof groupMembers.$inferSelect;
+export type SocialPost = typeof socialPosts.$inferSelect;
+export type SocialPostReaction = typeof socialPostReactions.$inferSelect;
+export type SocialPostComment = typeof socialPostComments.$inferSelect;
+export type ContentReport = typeof contentReports.$inferSelect;
+export type Notification = typeof notifications.$inferSelect;
