@@ -84,6 +84,7 @@ export const approvalStatusEnum = pgEnum("approval_status", [
   "pending",
   "approved",
   "rejected",
+  "suspended",
 ]);
 
 export const roleEnum = pgEnum("role", [
@@ -494,6 +495,98 @@ export const notifications = pgTable(
   ]
 );
 
+// ─── Events ───────────────────────────────────────────────────────────────────
+
+export const eventTypeEnum = pgEnum("event_type", [
+  "service",
+  "conference",
+  "outreach",
+  "social",
+  "training",
+  "prayer",
+  "other",
+]);
+
+export const rsvpStatusEnum = pgEnum("rsvp_status", [
+  "going",
+  "interested",
+  "not_going",
+]);
+
+export const events = pgTable(
+  "events",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    coverImageUrl: text("cover_image_url"),
+    eventType: eventTypeEnum("event_type").notNull().default("service"),
+    location: text("location").notNull().default(""),
+    locationUrl: text("location_url"),
+    startsAt: timestamp("starts_at", { mode: "date" }).notNull(),
+    endsAt: timestamp("ends_at", { mode: "date" }).notNull(),
+    capacity: integer("capacity"),
+    rsvpRequired: boolean("rsvp_required").notNull().default(false),
+    isPublished: boolean("is_published").notNull().default(false),
+    createdBy: text("created_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    uniqueIndex("events_slug_idx").on(t.slug),
+    index("events_starts_idx").on(t.startsAt),
+    index("events_published_idx").on(t.isPublished),
+  ]
+);
+
+export const eventRsvps = pgTable(
+  "event_rsvps",
+  {
+    eventId: text("event_id")
+      .notNull()
+      .references(() => events.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    status: rsvpStatusEnum("status").notNull(),
+    guestsCount: integer("guests_count").notNull().default(0),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.eventId, t.userId] }),
+    index("event_rsvps_event_idx").on(t.eventId),
+    index("event_rsvps_user_idx").on(t.userId),
+  ]
+);
+
+// ─── Admin audit log ──────────────────────────────────────────────────────────
+
+export const adminActions = pgTable(
+  "admin_actions",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    adminId: text("admin_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    actionType: text("action_type").notNull(),
+    targetType: text("target_type").notNull(),
+    targetId: text("target_id").notNull(),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>().default({}),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [
+    index("admin_actions_admin_idx").on(t.adminId),
+    index("admin_actions_created_idx").on(t.createdAt),
+  ]
+);
+
 // ─── Social types ─────────────────────────────────────────────────────────────
 
 export type Group = typeof groups.$inferSelect;
@@ -503,3 +596,6 @@ export type SocialPostReaction = typeof socialPostReactions.$inferSelect;
 export type SocialPostComment = typeof socialPostComments.$inferSelect;
 export type ContentReport = typeof contentReports.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
+export type Event = typeof events.$inferSelect;
+export type EventRsvp = typeof eventRsvps.$inferSelect;
+export type AdminAction = typeof adminActions.$inferSelect;

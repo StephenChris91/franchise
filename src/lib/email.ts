@@ -132,3 +132,178 @@ export async function sendPasswordResetEmail(opts: {
     html: passwordResetHtml({ fullName: opts.fullName, resetUrl }),
   });
 }
+
+// ─── ICS generator ────────────────────────────────────────────────────────────
+
+function formatIcsDate(d: Date): string {
+  return d
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}/, "");
+}
+
+function generateIcs(opts: {
+  title: string;
+  description?: string;
+  location?: string;
+  startsAt: Date;
+  endsAt: Date;
+  url?: string;
+}): string {
+  const uid = `event-${Date.now()}@thefranchiselagos.com.ng`;
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Franchise Church//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:${uid}`,
+    `DTSTART:${formatIcsDate(opts.startsAt)}`,
+    `DTEND:${formatIcsDate(opts.endsAt)}`,
+    `SUMMARY:${opts.title}`,
+    opts.description ? `DESCRIPTION:${opts.description.replace(/\n/g, "\\n").substring(0, 500)}` : "",
+    opts.location ? `LOCATION:${opts.location}` : "",
+    opts.url ? `URL:${opts.url}` : "",
+    "STATUS:CONFIRMED",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ]
+    .filter(Boolean)
+    .join("\r\n");
+}
+
+// ─── RSVP confirmation ────────────────────────────────────────────────────────
+
+function rsvpConfirmationHtml(opts: {
+  fullName: string;
+  eventTitle: string;
+  startsAt: Date;
+  location: string;
+  eventUrl: string;
+}) {
+  const dateStr = opts.startsAt.toLocaleDateString("en-NG", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+  const timeStr = opts.startsAt.toLocaleTimeString("en-NG", {
+    hour: "2-digit", minute: "2-digit", hour12: true,
+  });
+  return wrap(`
+    <h2 style="color:#af601a;font-size:20px;margin-bottom:16px;">You&apos;re going! 🎉</h2>
+    <p style="color:#e5e5e5;line-height:1.8;">Hi ${opts.fullName},</p>
+    <p style="color:#e5e5e5;line-height:1.8;">Your RSVP for <strong>${opts.eventTitle}</strong> is confirmed.</p>
+    <table style="width:100%;margin:24px 0;border-collapse:collapse;">
+      <tr><td style="padding:8px 0;color:#9ca3af;font-size:14px;">Date</td><td style="padding:8px 0;color:#fff;font-size:14px;">${dateStr}</td></tr>
+      <tr><td style="padding:8px 0;color:#9ca3af;font-size:14px;">Time</td><td style="padding:8px 0;color:#fff;font-size:14px;">${timeStr}</td></tr>
+      <tr><td style="padding:8px 0;color:#9ca3af;font-size:14px;">Location</td><td style="padding:8px 0;color:#fff;font-size:14px;">${opts.location}</td></tr>
+    </table>
+    <p style="color:#e5e5e5;font-size:13px;">A calendar invite is attached to this email.</p>
+    ${btn(opts.eventUrl, "View Event Details")}
+  `);
+}
+
+export async function sendRsvpConfirmation(opts: {
+  to: string;
+  fullName: string;
+  event: { title: string; startsAt: Date; endsAt: Date; location: string; slug: string; description: string };
+}) {
+  const eventUrl = `${APP_URL()}/events/${opts.event.slug}`;
+  const ics = generateIcs({
+    title: opts.event.title,
+    description: opts.event.description,
+    location: opts.event.location,
+    startsAt: opts.event.startsAt,
+    endsAt: opts.event.endsAt,
+    url: eventUrl,
+  });
+
+  await resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    subject: `You're going to ${opts.event.title}!`,
+    html: rsvpConfirmationHtml({
+      fullName: opts.fullName,
+      eventTitle: opts.event.title,
+      startsAt: opts.event.startsAt,
+      location: opts.event.location,
+      eventUrl,
+    }),
+    attachments: [
+      {
+        filename: "event.ics",
+        content: Buffer.from(ics, "utf-8"),
+      },
+    ],
+  });
+}
+
+// ─── Event reminder ───────────────────────────────────────────────────────────
+
+function eventReminderHtml(opts: { fullName: string; eventTitle: string; startsAt: Date; location: string; eventUrl: string }) {
+  const timeStr = opts.startsAt.toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit", hour12: true });
+  return wrap(`
+    <h2 style="color:#af601a;font-size:20px;margin-bottom:16px;">Reminder: ${opts.eventTitle} is tomorrow</h2>
+    <p style="color:#e5e5e5;line-height:1.8;">Hi ${opts.fullName},</p>
+    <p style="color:#e5e5e5;line-height:1.8;">Just a reminder that <strong>${opts.eventTitle}</strong> starts tomorrow at <strong>${timeStr}</strong> at ${opts.location}.</p>
+    ${btn(opts.eventUrl, "View Event")}
+  `);
+}
+
+export async function sendEventReminder(opts: {
+  to: string;
+  fullName: string;
+  eventTitle: string;
+  startsAt: Date;
+  location: string;
+  slug: string;
+}) {
+  await resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    subject: `Reminder: ${opts.eventTitle} is tomorrow`,
+    html: eventReminderHtml({ ...opts, eventUrl: `${APP_URL()}/events/${opts.slug}` }),
+  });
+}
+
+// ─── Weekly digest ────────────────────────────────────────────────────────────
+
+function weeklyDigestHtml(opts: {
+  newMembers: number;
+  postsCount: number;
+  pendingReports: number;
+  topGroups: { name: string; memberCount: number }[];
+}) {
+  const groups = opts.topGroups
+    .map((g) => `<tr><td style="padding:6px 0;color:#e5e5e5;">${g.name}</td><td style="padding:6px 0;color:#9ca3af;">${g.memberCount} members</td></tr>`)
+    .join("");
+
+  return wrap(`
+    <h2 style="color:#af601a;font-size:20px;margin-bottom:16px;">Weekly Community Digest</h2>
+    <p style="color:#e5e5e5;">Here&apos;s what happened in Franchise Church Online this week.</p>
+    <table style="width:100%;margin:24px 0;border-collapse:collapse;">
+      <tr><td style="padding:8px 0;color:#9ca3af;">New members</td><td style="padding:8px 0;color:#fff;font-weight:700;">${opts.newMembers}</td></tr>
+      <tr><td style="padding:8px 0;color:#9ca3af;">Community posts</td><td style="padding:8px 0;color:#fff;font-weight:700;">${opts.postsCount}</td></tr>
+      <tr><td style="padding:8px 0;color:#9ca3af;">Pending reports</td><td style="padding:8px 0;color:${opts.pendingReports > 0 ? "#f87171" : "#fff"};font-weight:700;">${opts.pendingReports}</td></tr>
+    </table>
+    ${opts.topGroups.length > 0 ? `
+      <h3 style="color:#af601a;font-size:16px;margin-top:28px;">Top Groups</h3>
+      <table style="width:100%;border-collapse:collapse;">${groups}</table>
+    ` : ""}
+    ${btn(`${APP_URL()}/admin`, "View Admin Dashboard")}
+  `);
+}
+
+export async function sendWeeklyDigest(opts: {
+  to: string;
+  newMembers: number;
+  postsCount: number;
+  pendingReports: number;
+  topGroups: { name: string; memberCount: number }[];
+}) {
+  await resend.emails.send({
+    from: FROM,
+    to: opts.to,
+    subject: `Franchise Church — Weekly Digest`,
+    html: weeklyDigestHtml(opts),
+  });
+}

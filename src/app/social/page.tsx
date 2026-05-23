@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { format } from "date-fns";
+import { Calendar, MapPin } from "lucide-react";
 import { auth } from "../../../auth";
 import {
   getMainFeed,
@@ -9,6 +11,7 @@ import {
   getUnreadNotificationCount,
   getMembers,
 } from "@/lib/social";
+import { getUpcomingEventTeaser } from "@/lib/events";
 import SocialLayout from "@/components/social/SocialLayout";
 import SocialFeedSection from "@/components/social/SocialFeedSection";
 import NotificationBell from "@/components/social/NotificationBell";
@@ -27,12 +30,13 @@ export default async function SocialPage({
 
   const { type } = await searchParams;
 
-  const [initialPosts, joinedGroups, notifications, unreadCount, members] = await Promise.all([
+  const [initialPosts, joinedGroups, notifications, unreadCount, members, upcomingEvents] = await Promise.all([
     getMainFeed(session.user.id, undefined, type),
     getUserGroups(session.user.id),
     getUserNotifications(session.user.id),
     getUnreadNotificationCount(session.user.id),
     getMembers(),
+    getUpcomingEventTeaser(3),
   ]);
 
   // Find the current user's username for optimistic post display
@@ -76,6 +80,43 @@ export default async function SocialPage({
           See all members →
         </Link>
       </div>
+
+      {/* Events teaser */}
+      {upcomingEvents.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-gray-900">Upcoming Events</h3>
+            <Link href="/events" className="text-xs text-[#af601a] hover:underline">
+              See all →
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {upcomingEvents.map((e) => (
+              <Link
+                key={e.id}
+                href={`/events/${e.slug}`}
+                className="flex gap-3 hover:bg-gray-50 rounded-lg p-1.5 transition group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-[#af601a]/10 flex items-center justify-center shrink-0">
+                  <Calendar size={15} className="text-[#af601a]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#af601a] transition">
+                    {e.title}
+                  </p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">
+                    {format(new Date(e.startsAt), "d MMM · h:mm a")}
+                  </p>
+                  <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-0.5">
+                    <MapPin size={9} />
+                    <span className="truncate">{e.location}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="bg-gradient-to-br from-[#1b1b1b] to-[#2a2a2a] rounded-2xl p-4 text-white/80">
         <p className="text-xs leading-relaxed italic">
