@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Plus, Pencil, Eye, EyeOff, Star, Trash2 } from "lucide-react";
+import { Plus, Pencil, Eye, EyeOff, Star } from "lucide-react";
+import DeletePostButton from "@/components/blog/DeletePostButton";
 import { auth } from "../../../../auth";
 import { getAllPostsAdmin } from "@/lib/blog";
-import { togglePublished, deletePost, setFeatured } from "@/lib/actions/admin-blog";
+import { togglePublished, setFeatured } from "@/lib/actions/admin-blog";
 import { seedSamplePosts } from "@/lib/actions/seed-blog";
 import { Badge } from "@/components/ui/badge";
 import { CATEGORY_LABELS } from "@/lib/blog-constants";
@@ -160,25 +161,7 @@ export default async function AdminBlogPage() {
                         )}
 
                         {/* Delete */}
-                        <form
-                          action={async () => {
-                            "use server";
-                            await deletePost(post.id);
-                          }}
-                        >
-                          <button
-                            type="submit"
-                            className="rounded p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                            title="Delete"
-                            onClick={(e) => {
-                              if (!confirm(`Delete "${post.title}"? This cannot be undone.`)) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </form>
+                        <DeletePostButton id={post.id} title={post.title} />
 
                         {/* Preview */}
                         {post.isPublished && (
