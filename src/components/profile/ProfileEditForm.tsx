@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { updateProfileAction } from "@/lib/actions/profile";
 import { Loader2, User, Upload } from "lucide-react";
 import type { Profile } from "../../../db/schema";
@@ -230,12 +231,12 @@ export default function ProfileEditForm({ profile }: { profile: Profile }) {
           {isSubmitting && <Loader2 size={16} className="animate-spin" />}
           {isSubmitting ? "Saving…" : "Save changes"}
         </button>
-        <a
+        <Link
           href="/profile"
           className="px-5 py-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 transition flex items-center"
         >
           Cancel
-        </a>
+        </Link>
       </div>
     </form>
   );
