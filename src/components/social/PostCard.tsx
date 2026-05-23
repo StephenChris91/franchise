@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { MessageCircle, MoreHorizontal, Flag, Pencil, Trash2, Pin, EyeOff } from "lucide-react";
+import { MessageCircle, MoreHorizontal, Flag, Trash2, Pin, EyeOff } from "lucide-react";
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import TiptapLink from "@tiptap/extension-link";
@@ -44,12 +44,55 @@ interface Props {
   onCommentClick?: () => void;
 }
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderSegment(seg: unknown): string {
+  if (!seg || typeof seg !== "object") return `<p>${escapeHtml(String(seg ?? ""))}</p>`;
+  const s = seg as { type?: string; text?: string };
+  if (s.type === "plain" && typeof s.text === "string") {
+    return `<p>${escapeHtml(s.text)}</p>`;
+  }
+  if (s.type === "doc") {
+    try {
+      return generateHTML(seg as Parameters<typeof generateHTML>[0], [StarterKit, TiptapLink]);
+    } catch {
+      return `<p></p>`;
+    }
+  }
+  return `<p></p>`;
+}
+
 function renderContent(content: string): string {
   try {
-    const json = JSON.parse(content);
-    return generateHTML(json, [StarterKit, TiptapLink]);
+    const parsed = JSON.parse(content) as { type?: string; segments?: unknown[] };
+
+    // Thread: array of segments
+    if (parsed.type === "thread" && Array.isArray(parsed.segments)) {
+      return parsed.segments
+        .map((seg, i) =>
+          i === 0
+            ? renderSegment(seg)
+            : `<hr style="border:0;border-top:1px dashed #e5e7eb;margin:10px 0;">${renderSegment(seg)}`
+        )
+        .join("");
+    }
+
+    // Single Tiptap doc
+    if (parsed.type === "doc") {
+      return generateHTML(parsed as Parameters<typeof generateHTML>[0], [StarterKit, TiptapLink]);
+    }
+
+    // Unrecognised JSON — show as plain text
+    return `<p>${escapeHtml(content)}</p>`;
   } catch {
-    return `<p>${content}</p>`;
+    // Not JSON at all — plain text
+    return `<p>${escapeHtml(content)}</p>`;
   }
 }
 
@@ -167,7 +210,7 @@ export default function PostCard({
 
         {/* Content */}
         <div
-          className="prose prose-sm max-w-none text-gray-800 [&_a]:text-[#af601a] [&_a]:underline"
+          className="prose prose-sm max-w-none text-gray-800 [&_a]:text-[#af601a] [&_a]:underline break-words overflow-hidden min-w-0"
           dangerouslySetInnerHTML={{ __html: html }}
         />
 

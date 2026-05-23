@@ -65,7 +65,7 @@ export async function createPost(formData: {
   const { content, postType, groupId, mediaUrls = [] } = formData;
 
   if (!content.trim()) throw new Error("Content is required");
-  if (content.length > 5000) throw new Error("Content too long (max 5000 chars)");
+  if (content.length > 12000) throw new Error("Content too long");
   if (containsProfanity(content)) throw new Error("Content contains prohibited language");
   if (mediaUrls.length > 4) throw new Error("Max 4 images per post");
 
@@ -96,7 +96,7 @@ export async function createPost(formData: {
 
   revalidatePath("/social");
   if (groupId) revalidatePath(`/social/groups/${groupId}`);
-  return { ok: true, postId: post.id };
+  return { ok: true, post };
 }
 
 export async function editPost(postId: string, content: string) {

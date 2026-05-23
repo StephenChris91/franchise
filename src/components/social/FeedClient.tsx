@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import { Loader2 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusher-client";
@@ -8,7 +8,7 @@ import PostCard from "./PostCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SocialPost, Group } from "../../../db/schema";
 
-interface PostWithMeta {
+export interface PostWithMeta {
   post: SocialPost;
   author: { name: string; username: string; photoUrl?: string | null };
   group?: Pick<Group, "id" | "name" | "slug"> | null;
@@ -23,6 +23,8 @@ interface Props {
   groupId?: string | null; // null = main feed
   postType?: string;
   loadMoreAction: (cursor: string) => Promise<PostWithMeta[]>;
+  /** Posts the current user just created — shown immediately at the top */
+  myPosts?: PostWithMeta[];
 }
 
 export default function FeedClient({
@@ -32,26 +34,28 @@ export default function FeedClient({
   groupId,
   postType,
   loadMoreAction,
+  myPosts = [],
 }: Props) {
   const [posts, setPosts] = useState(initialPosts);
   const [cursor, setCursor] = useState(initialPosts[initialPosts.length - 1]?.post.createdAt?.toISOString() ?? "");
   const [hasMore, setHasMore] = useState(initialPosts.length === 20);
   const [loading, setLoading] = useState(false);
   const [newPostIds, setNewPostIds] = useState<Set<string>>(new Set());
-  const mounted = useRef(false);
 
   const { ref: sentinelRef, inView } = useInView({ threshold: 0 });
 
-  // Pusher: listen for new posts
+  // Pusher: listen for new posts from other users
   useEffect(() => {
-    if (!mounted.current) { mounted.current = true; return; }
     const channel = groupId ? `feed-${groupId}` : "feed-main";
     const pusher = getPusherClient();
     const ch = pusher.subscribe(channel);
     ch.bind("new-post", ({ postId }: { postId: string }) => {
       setNewPostIds((s) => new Set(s).add(postId));
     });
-    return () => pusher.unsubscribe(channel);
+    return () => {
+      ch.unbind_all();
+      pusher.unsubscribe(channel);
+    };
   }, [groupId]);
 
   const loadMore = useCallback(async () => {
@@ -73,7 +77,9 @@ export default function FeedClient({
     if (inView) loadMore();
   }, [inView, loadMore]);
 
-  if (posts.length === 0) {
+  const isEmpty = posts.length === 0 && myPosts.length === 0;
+
+  if (isEmpty) {
     return (
       <div className="bg-white rounded-2xl shadow-sm p-10 text-center text-gray-500">
         <p className="text-base font-medium">Nothing here yet</p>
@@ -87,6 +93,20 @@ export default function FeedClient({
 
   return (
     <div className="space-y-4">
+      {/* Current user's own posts — appear immediately after posting */}
+      {myPosts.map(({ post, author, group, reactionCounts, userReactions }) => (
+        <PostCard
+          key={`mine-${post.id}`}
+          post={post}
+          author={author}
+          group={group}
+          reactionCounts={reactionCounts}
+          userReactions={userReactions}
+          currentUserId={currentUserId}
+          currentUserRole={currentUserRole}
+        />
+      ))}
+
       {newPostIds.size > 0 && (
         <button
           onClick={() => { setNewPostIds(new Set()); window.location.reload(); }}

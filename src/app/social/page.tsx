@@ -10,8 +10,7 @@ import {
   getMembers,
 } from "@/lib/social";
 import SocialLayout from "@/components/social/SocialLayout";
-import PostComposer from "@/components/social/PostComposer";
-import FeedClient from "@/components/social/FeedClient";
+import SocialFeedSection from "@/components/social/SocialFeedSection";
 import NotificationBell from "@/components/social/NotificationBell";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +34,10 @@ export default async function SocialPage({
     getUnreadNotificationCount(session.user.id),
     getMembers(),
   ]);
+
+  // Find the current user's username for optimistic post display
+  const currentUserUsername =
+    members.find((m) => m.userId === session.user.id)?.username ?? "";
 
   async function loadMorePosts(cursor: string) {
     "use server";
@@ -101,17 +104,13 @@ export default async function SocialPage({
         />
       </div>
 
-      <div className="mb-4">
-        <PostComposer
-          authorName={session.user.name ?? "Member"}
-          authorPhoto={session.user.image}
-        />
-      </div>
-
-      <FeedClient
+      <SocialFeedSection
         initialPosts={initialPosts}
         currentUserId={session.user.id}
         currentUserRole={session.user.role}
+        currentUserName={session.user.name ?? "Member"}
+        currentUserPhoto={session.user.image}
+        currentUserUsername={currentUserUsername}
         groupId={null}
         postType={type}
         loadMoreAction={loadMorePosts}
