@@ -42,7 +42,6 @@ export default function SocialFeedSection({
       reactionCounts: { like: 0, amen: 0, praying: 0, heart: 0 },
       userReactions: [],
     };
-    // Prepend so the newest post shows first
     setMyPosts((prev) => [newEntry, ...prev]);
   }
 
@@ -61,6 +60,8 @@ export default function SocialFeedSection({
         initialPosts={initialPosts}
         currentUserId={currentUserId}
         currentUserRole={currentUserRole}
+        currentUserName={currentUserName}
+        currentUserPhoto={currentUserPhoto}
         groupId={groupId}
         postType={postType}
         loadMoreAction={loadMoreAction}

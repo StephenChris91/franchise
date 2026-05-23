@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
-import { Loader2 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusher-client";
 import PostCard from "./PostCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,10 +19,11 @@ interface Props {
   initialPosts: PostWithMeta[];
   currentUserId?: string;
   currentUserRole?: string;
-  groupId?: string | null; // null = main feed
+  currentUserName?: string;
+  currentUserPhoto?: string | null;
+  groupId?: string | null;
   postType?: string;
   loadMoreAction: (cursor: string) => Promise<PostWithMeta[]>;
-  /** Posts the current user just created — shown immediately at the top */
   myPosts?: PostWithMeta[];
 }
 
@@ -31,13 +31,17 @@ export default function FeedClient({
   initialPosts,
   currentUserId,
   currentUserRole,
+  currentUserName,
+  currentUserPhoto,
   groupId,
-  postType,
+  postType: _postType,
   loadMoreAction,
   myPosts = [],
 }: Props) {
   const [posts, setPosts] = useState(initialPosts);
-  const [cursor, setCursor] = useState(initialPosts[initialPosts.length - 1]?.post.createdAt?.toISOString() ?? "");
+  const [cursor, setCursor] = useState(
+    initialPosts[initialPosts.length - 1]?.post.createdAt?.toISOString() ?? ""
+  );
   const [hasMore, setHasMore] = useState(initialPosts.length === 20);
   const [loading, setLoading] = useState(false);
   const [newPostIds, setNewPostIds] = useState<Set<string>>(new Set());
@@ -104,6 +108,8 @@ export default function FeedClient({
           userReactions={userReactions}
           currentUserId={currentUserId}
           currentUserRole={currentUserRole}
+          currentUserName={currentUserName}
+          currentUserPhoto={currentUserPhoto}
         />
       ))}
 
@@ -126,6 +132,8 @@ export default function FeedClient({
           userReactions={userReactions}
           currentUserId={currentUserId}
           currentUserRole={currentUserRole}
+          currentUserName={currentUserName}
+          currentUserPhoto={currentUserPhoto}
         />
       ))}
 

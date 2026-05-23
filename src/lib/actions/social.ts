@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, gte, count, sql } from "drizzle-orm";
+import { and, eq, gte, count, sql, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "../../../auth";
 import {
@@ -12,6 +12,7 @@ import {
   groupMembers,
   contentReports,
   notifications,
+  profiles,
 } from "../../../db";
 import { pusherServer } from "@/lib/pusher";
 import { containsProfanity } from "@/lib/profanity";
@@ -209,6 +210,63 @@ export async function toggleReaction(
 }
 
 // ─── Comments ─────────────────────────────────────────────────────────────────
+
+export async function fetchComments(postId: string) {
+  const rows = await db
+    .select({
+      id: socialPostComments.id,
+      content: socialPostComments.content,
+      authorId: socialPostComments.authorId,
+      parentId: socialPostComments.parentId,
+      createdAt: socialPostComments.createdAt,
+      authorName: profiles.fullName,
+      authorUsername: profiles.username,
+      authorPhoto: profiles.photoUrl,
+    })
+    .from(socialPostComments)
+    .leftJoin(profiles, eq(socialPostComments.authorId, profiles.userId))
+    .where(
+      and(
+        eq(socialPostComments.postId, postId),
+        eq(socialPostComments.isHidden, false)
+      )
+    )
+    .orderBy(desc(socialPostComments.createdAt))
+    .limit(100);
+
+  return rows;
+}
+
+export async function appendToThread(postId: string, text: string) {
+  const user = await requireApproved();
+
+  const trimmed = text.trim();
+  if (!trimmed) throw new Error("Text is required");
+  if (trimmed.length > 500) throw new Error("Too long");
+  if (containsProfanity(trimmed)) throw new Error("Content contains prohibited language");
+
+  const [post] = await db.select().from(socialPosts).where(eq(socialPosts.id, postId)).limit(1);
+  if (!post) throw new Error("Post not found");
+  if (post.authorId !== user.id) throw new Error("Not your post");
+
+  let parsed: { type: string; segments?: unknown[] };
+  try {
+    parsed = JSON.parse(post.content) as typeof parsed;
+  } catch {
+    parsed = { type: "thread", segments: [{ type: "plain", text: post.content }] };
+  }
+
+  let newContent: string;
+  if (parsed.type === "thread" && Array.isArray(parsed.segments)) {
+    newContent = JSON.stringify({ ...parsed, segments: [...parsed.segments, { type: "plain", text: trimmed }] });
+  } else {
+    newContent = JSON.stringify({ type: "thread", segments: [parsed, { type: "plain", text: trimmed }] });
+  }
+
+  await db.update(socialPosts).set({ content: newContent, updatedAt: new Date() }).where(eq(socialPosts.id, postId));
+  revalidatePath("/social");
+  return { ok: true, content: newContent };
+}
 
 export async function createComment(postId: string, content: string, parentId?: string) {
   const user = await requireApproved();
